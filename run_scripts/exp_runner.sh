@@ -51,12 +51,12 @@ for data_file in $DATA_PATH*; do
     echo "Using SLURM with job name $job_name"
     sbatch \
       --job-name=$job_name \
-      ./exp_driver.sbatch $TREE_FILE $REGIME_FILE $data_file $output_file
+      ./run_scripts/exp_driver.sbatch $TREE_FILE $REGIME_FILE $data_file $output_file
   fi
   
   else
     echo "Using CPU"
-    ./exp_pipeline.sh \
+    ./run_scripts/exp_pipeline.sh \
       -t $TREE_FILE \
       -r $REGIME_FILE \
       -d $data_file \

@@ -18,7 +18,7 @@ REGIME_FILE=$2
 DATA_PATH=$3
 OUTPUT_FILE=$4
 
-./exp_pipeline.sh \
+./run_scripts/exp_pipeline.sh \
   -t $TREE_FILE \
   -r $REGIME_FILE \
   -d $DATA_PATH \
