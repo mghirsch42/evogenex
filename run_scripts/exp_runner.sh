@@ -6,7 +6,7 @@ OUTPUT_PREFIX=""
 while getopts t:r:d:o:p:s flag; do
   case "$flag" in
     t) TREE_FILE=${OPTARG};;
-    r) REGIME_FILE={OPTARG};;
+    r) REGIME_FILE=${OPTARG};;
     d) DATA_PATH=${OPTARG};;
     o) OUTPUT_PATH=${OPTARG};;
     p) OUTPUT_PREFIX=${OPTARG};;
@@ -34,7 +34,7 @@ if [ ! -d $OUTPUT_PATH ]; then
   exit
 fi
 
-if [ $OUTPUT_PREFIX != "" ]; then
+if [ "${OUTPUT_PREFIX}" != "" ]; then
   if [ ${OUTPUT_PREFIX: -1} != "_" ]; then
     $OUTPUT_PREFIX="${OUTPUT_PREFIX}_"
   fi
@@ -51,9 +51,7 @@ for data_file in $DATA_PATH*; do
     echo "Using SLURM with job name $job_name"
     sbatch \
       --job-name=$job_name \
-      ./run_scripts/exp_driver.sbatch $TREE_FILE $REGIME_FILE $data_file $output_file
-  fi
-  
+      ./run_scripts/exp_driver.sbatch $TREE_FILE $REGIME_FILE $data_file $output_file  
   else
     echo "Using CPU"
     ./run_scripts/exp_pipeline.sh \
@@ -61,4 +59,5 @@ for data_file in $DATA_PATH*; do
       -r $REGIME_FILE \
       -d $data_file \
       -o $output_file
+  fi
 done

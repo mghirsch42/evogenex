@@ -7,11 +7,11 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=36gb
 #SBATCH --exclusive
-#SBATCH --time=30:00:00
+#SBATCH --time=00:30:00
 #SBATCH --output=output/%x_%j.out
 #SBATCH --error=output/%x_%j.err
 
-module load F/4.1.2/3.14
+module load R/4.1.2/3.14
 
 TREE_FILE=$1
 REGIME_FILE=$2
