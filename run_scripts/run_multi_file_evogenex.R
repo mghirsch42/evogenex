@@ -1,0 +1,52 @@
+.libPaths("~/include/R/") # Needed for cluster
+
+library(tidyverse)
+library(EvoGeneX)
+library(knitr)
+library(ape)
+
+# Parse arguments
+args = commandArgs(trailingOnly=TRUE)
+newick_file <- args[1]
+regime_file <- args[2]
+data_files <- list.files(args[3], full.names=TRUE)
+output_file <- args[4]
+
+# Function to process a single gene
+process_single_gene <- function(data_tall) {
+  ou_res <- evog$fit(data_tall, format = "tall", alpha = 0.1, gamma = 0.01)
+  brown_res <- brown$fit(data_tall, format = "tall", gamma = 0.01)
+  
+  # loglikelihood ratio test EvoGeneX VS replicated Brownian motion
+  pvalue <- 1 - pchisq((ou_res$loglik - brown_res$loglik) * 2, (ou_dof - brown_dof))
+}
+
+# Setup evogenex and brownian motion models
+evog <- EvoGeneX()
+evog$setTree(newick_file)
+evog$setRegimes(regime_file)
+
+brown <- Brown()
+brown$setTree(newick_file)
+
+# Setup stat test parameters
+ou_dof <- 4 # alpha, sigma.sq, theta, gamma
+brown_dof <- 3 # sigma.sq, theta, gamma
+fdr_cutoff <- 0.05
+
+# Run Evogenex over all genes
+all_results <- data.frame()
+for (data_file in data_files) {
+  data_tall <- read.csv(data_file)
+  results <- (
+    data_tall
+    %>% group_by(gene)
+    %>% summarize(pvalue = process_single_gene(cur_data()), .groups = "keep")
+    %>% ungroup()
+    %>% mutate(qvalue = p.adjust(pvalue, method = "fdr"))
+    %>% mutate(constrained_vs_neutral = ifelse(qvalue < fdr_cutoff, "constrained", "neutral"))
+  )
+  all_results <- rbind(all_results, results)
+}
+
+write.csv(all_results, output_file, row.names=FALSE)
