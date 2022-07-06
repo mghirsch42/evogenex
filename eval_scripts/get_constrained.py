@@ -1,19 +1,27 @@
 import pandas as pd
 import os
 import trisicell as tsc
+import argparse
 
 
-result_path = "results/tpm/"
+result_path = "results/fpkm-100/"
 
-sc_data = tsc.datasets.sublines_scrnaseq()
-exp_data = sc_data["expression"]
+def main(result_path):
+    sc_data = tsc.datasets.sublines_scrnaseq()
+    exp_data = sc_data["expression"]
 
-results_df = pd.DataFrame()
+    results_df = pd.DataFrame()
 
-for f in os.listdir(result_path):
-    temp_df = pd.read_csv(result_path+f)
-    results_df = results_df.append(temp_df, ignore_index=True)
+    for f in os.listdir(result_path):
+        temp_df = pd.read_csv(result_path+f)
+        results_df = results_df.append(temp_df, ignore_index=True)
 
-results_df["ens_gene"] = exp_data.var.index[results_df["gene"].tolist()]
+    results_df["ens_gene"] = exp_data.var.index[results_df["gene"].tolist()]
 
-print(results_df[results_df["constrained_vs_neutral"] == "constrained"])
+    print(results_df[results_df["constrained_vs_neutral"] == "constrained"])
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("result_path", type=str, action="store")
+    args = parser.parse_args()
+    main(args.result_path)
