@@ -19,7 +19,7 @@ TWO_REGIME_FILE=$3
 DATA_PATH=$4
 OUTPUT_FILE=$5
 
-./run_scripts/exp_pipeline.sh \
+./run_scripts/adaptive_pipeline.sh \
   -t $TREE_FILE \
   -r $SINGLE_REGIME_FILE \
   -u $TWO_REGIME_FILE \
