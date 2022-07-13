@@ -1,73 +1,67 @@
-from ast import Continue
 import dendropy
 from ete3 import PhyloTree
+from matplotlib.pyplot import sca
 import numpy as np
+import argparse
 
-tree_file = "tree_files/sc-bwes-cons.tree"
-output_file = "tree_files/sc-bwes-cons-scaled-100.tree"
-
-tree = dendropy.Tree.get(path=tree_file, schema="newick")
-# t = PhyloTree(tree_file)
-# t.show()
-
-lineages = []
-lineage_sums = {}
-scaling_factors = {}
-
-def rec(e, s, curr_lineage, lineages, lineage_sums):
-    if e.length:
-        s += e.length
-    curr_lineage.append(e)
-    lineages.append(curr_lineage)
-    if e.is_leaf():
-        lineage_sums[e] = s
-        scaling_factors[e] = [e.length / s]
-        return scaling_factors[e]
-    for c in e.head_node.child_edges():
-        sf = rec(c, s, curr_lineage, lineages, lineage_sums)
-        if e in scaling_factors.keys():
-            scaling_factors[e].extend([sf])
-        else:
-            scaling_factors[e] = [sf]
-    return scaling_factors[e]
-
-for e in tree.seed_node.child_edges():
-    sf = rec(e, 0, [], lineages, lineage_sums)
-    if e in scaling_factors.keys():
-        scaling_factors[e].extend(sf)
+    
+def get_lineage_lengths_rec(edge, curr_sum, curr_lineage, lineage_lengths):
+    if edge.length:
+        curr_sum += edge.length
+    curr_lineage.append(edge)
+    if edge.is_leaf():
+        lineage_lengths[edge] = curr_sum
     else:
-        scaling_factors[e] = [sf]
+        for child in edge.head_node.child_edges():
+            get_lineage_lengths_rec(child, curr_sum, curr_lineage.copy(), lineage_lengths)
 
-# print(lineages)
-# print(lineage_sums)
-# print(scaling_factors)
+def get_scaling_factors_rec(edge, scaling_factors):
+    if edge.is_leaf():
+        return scaling_factors[edge]
+    child_sfs = []
+    for child_edge in edge.head_node.child_edges():
+        child_sfs.append(get_scaling_factors_rec(child_edge, scaling_factors))
+    scaling_factors[edge] = np.mean(child_sfs)
+    return scaling_factors[edge]
 
-def rec2(sfs):
-    print("Enter:", sfs)
-    print("ndim:", np.ndim(sfs), len(sfs))
-    if not any(type(x) == list for x in sfs):
-        print("Return:", sfs[0])
-        return sfs[0]
-    sfs2 = []
-    for sub in sfs:
-        sfs2.append(rec2(sub))
-    print("Return:", np.mean(sfs2))
-    return np.mean(sfs2)
+def main(tree_file, output_file):
+    
+    # Read in tree
+    tree = dendropy.Tree.get(path=tree_file, schema="newick")
+
+    # Initialize dictionaries
+    lineage_lengths = {} # Dictionary with terminal edges as keys and root to tip branch lengths for that edge as values
+    scaling_factors = {} # Dictionary with edges as keys and float scaling factors as values
+
+    # Calculate the lengths of the lineages and populate lineage_lengths
+    for edge in tree.seed_node.child_edges():
+        get_lineage_lengths_rec(edge, 0, [], lineage_lengths)
+    min_len = min(lineage_lengths.values())
+    print(min_len)
+    # Calculate scaling factors of the terminal edges and populate those in scaling_factors
+    for terminal_edge in lineage_lengths.keys():
+        sf = min_len / lineage_lengths[terminal_edge]
+        scaling_factors[terminal_edge] = sf
+
+    # Calculate scaling factors for the rest of the edges and populate scaling_factors
+    for edge in tree.seed_node.child_edges():
+        get_scaling_factors_rec(edge, scaling_factors)
+
+    # Multiply edges by scaling factors
+    for edge in tree.edges():
+        if edge in scaling_factors.keys():  # This will include a root edge that isn't scaled
+            print("old length:", edge.length)
+            print("scaling factor:", scaling_factors[edge])
+            edge.length *= scaling_factors[edge]
+            print("new length", edge.length)
+
+    # Write to output
+    tree.write(path=output_file, schema="newick")
 
 
-for e in tree.edges():
-    if not e in scaling_factors.keys(): continue
-    print(scaling_factors[e])
-    sf = rec2(scaling_factors[e])
-    print(sf)
-    e.length = e.length * sf
-
-for e in tree.edges():
-    e.length *= 100
-
-print(tree.__str__())
-t = PhyloTree(tree.__str__()+";")
-t.show()
-
-tree.write(path=output_file,
-        schema="newick")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tree_file", type=str, action="store", default="tree_files/sc-bwes-cons.tree")
+    parser.add_argument("--output_file", type=str, action="store", default="tree_files/sc-bwes-cons-scaled.tree")
+    args = parser.parse_args()
+    main(args.tree_file, args.output_file)
