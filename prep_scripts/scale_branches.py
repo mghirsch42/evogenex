@@ -24,7 +24,7 @@ def get_scaling_factors_rec(edge, scaling_factors):
     scaling_factors[edge] = np.mean(child_sfs)
     return scaling_factors[edge]
 
-def main(tree_file, output_file):
+def main(tree_file, output_file, mult_factor):
     
     # Read in tree
     tree = dendropy.Tree.get(path=tree_file, schema="newick")
@@ -37,7 +37,7 @@ def main(tree_file, output_file):
     for edge in tree.seed_node.child_edges():
         get_lineage_lengths_rec(edge, 0, [], lineage_lengths)
     min_len = min(lineage_lengths.values())
-    print(min_len)
+    # print(min_len)
     # Calculate scaling factors of the terminal edges and populate those in scaling_factors
     for terminal_edge in lineage_lengths.keys():
         sf = min_len / lineage_lengths[terminal_edge]
@@ -50,10 +50,10 @@ def main(tree_file, output_file):
     # Multiply edges by scaling factors
     for edge in tree.edges():
         if edge in scaling_factors.keys():  # This will include a root edge that isn't scaled
-            print("old length:", edge.length)
-            print("scaling factor:", scaling_factors[edge])
-            edge.length *= scaling_factors[edge]
-            print("new length", edge.length)
+            # print("old length:", edge.length)
+            # print("scaling factor:", scaling_factors[edge])
+            edge.length *= scaling_factors[edge] * mult_factor
+            # print("new length", edge.length)
 
     # Write to output
     tree.write(path=output_file, schema="newick")
@@ -61,7 +61,8 @@ def main(tree_file, output_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tree_file", type=str, action="store", default="tree_files/sc-bwes-cons.tree")
-    parser.add_argument("--output_file", type=str, action="store", default="tree_files/sc-bwes-cons-scaled.tree")
+    parser.add_argument("tree_file", type=str, action="store")
+    parser.add_argument("output_file", type=str, action="store")
+    parser.add_argument("--mult_factor", type=float, action="store", default=1)
     args = parser.parse_args()
-    main(args.tree_file, args.output_file)
+    main(args.tree_file, args.output_file, args.mult_factor)
