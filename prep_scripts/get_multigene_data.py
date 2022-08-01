@@ -1,81 +1,104 @@
 import trisicell as tsc
 import pandas as pd
 import numpy as np
-import seaborn as sns
-from matplotlib import pyplot as plt
-
-# TODO: Currently just taking the first 4 replicates, need to change that
-
-wide = False
-start = 0
-end = 55401
-inc = 1000
-dtype = "tpm" # tpm or fpkm
-save_path = "data/tpm_all/"
-
-while start < end:
-    curr_end = start + inc
-    if curr_end > end: curr_end = end
-
-    gene_indices = list(range(start,curr_end))
-    gene_str = "{}-{}".format(start, curr_end)
-
-    print("Running for genes " + gene_str)
-
-    sc_data = tsc.datasets.sublines_scrnaseq()
-    exp_data = sc_data["expression"]
-
-    sc_df = pd.DataFrame()
-    sc_df["subline"] = sc_data["expression"].obs["clone"]
-    sc_df["subclone"] = sc_data["expression"].obs.index
-    sc_df = sc_df.drop(columns=["subclone"])
-    sc_df = sc_df.reset_index()
+import math
+import argparse
 
 
-    if wide:
-        exp_df = pd.DataFrame()
-        for index in gene_indices:
-            gene_row = {"gene": index}
-            for subline in sc_df["subline"].unique():
-                subclones = sc_df.loc[sc_df["subline"] == subline]["subclone"].tolist()
-                subclones.sort()
-                subline_row = []
-                for subclone in subclones:
-                    if len(subline_row) == 4:
-                        break
-                    rep = exp_data[exp_data.obs.index == subclone].layers[dtype]
-                    if len(rep) != 1:
-                        print("error", subline)
-                        exit()
-                    subline_row.append(rep[0][index])
-                d = {"{}_R1".format(subline): subline_row[0], "{}_R2".format(subline): subline_row[1],
-                    "{}_R3".format(subline): subline_row[2], "{}_R4".format(subline): subline_row[3]}
-                gene_row.update(d)
-            exp_df = exp_df.append(gene_row, ignore_index=True)
-    else:
+def main(start, end, inc, dtype, save_path, save_prefix):
+    while start < end:
+
+        # Set boundary values for this gene set
+        curr_end = start + inc
+        if curr_end > end: curr_end = end
+
+        # Get the gene indices for this file
+        gene_indices = list(range(start,curr_end))
+        gene_str = "{}-{}".format(start, curr_end)
+
+        print("Running for genes " + gene_str)
+
+        # Load the data
+        sc_data = tsc.datasets.sublines_scrnaseq()
+        exp_data = sc_data["expression"]
+
+        # Create new dataframe for this gene set
         exp_df = pd.DataFrame(columns=["gene", "species", "replicate", "exprval"])
+        
+        dropped = 0
+
+        # Loop through the genes for this file
         for index in gene_indices:
-            for subline in sc_df["subline"].unique():
-                subclones = sc_df.loc[sc_df["subline"] == subline]["subclone"].tolist()
-                subclones.sort()
-                rep_count = 1
+
+            # Get the name of this gene (ensembleid_genename)
+            gene_name = exp_data.var.index[index]
+
+            # Loop through the sublines (C1, C2, etc)
+            for subline in exp_data.obs["clone"].unique(): 
+
+                # Get the replicates (subclones) for this subline (C1_1, C1_2, etc)
+                subclones = exp_data[exp_data.obs["clone"] == subline].obs.index.tolist()
+
+                # Loop through the replicates (subclones)
                 for subclone in subclones:
-                    if rep_count == 4:
-                        break
+
+                    rep_name = "R{}".format(subclone.split("_")[-1])
+
+                    # Get the expression data for all genes for this replicate
                     rep = exp_data[exp_data.obs.index == subclone].layers[dtype]
+
+                    # Error check formatting
                     if len(rep) != 1:
                         print("error", subline)
                         exit()
+
+                    # Get the raw expression value for this gene
+                    rep = rep[0][index]
+
+                    # If the value is 0, skip and move to the next
+                    if rep == 0:
+                        continue
+                    else:
+                        # If not zero, do log transformation
+                        expr_val = math.log2(1+rep)
+
+                    # Add this value to the dataframe
                     exp_df = exp_df.append({
-                        "gene": index,
+                        "gene": gene_name,
                         "species": subline,
-                        "replicate": rep_count,
-                        "exprval": rep[0][index]
+                        "replicate": rep_name,
+                        "exprval": expr_val
                     }, ignore_index=True)
-                    rep_count+=1
-    # print(exp_df)
-    if gene_str == "":
-        gene_str = "_".join(list(map(str, gene_indices)))
-    exp_df.to_csv("{}gene_{}.csv".format(save_path, gene_str), index=False)
-    # print("Saved genes " + gene_str + " to " + save_path)
-    start = curr_end
+
+            # If the gene has all NA values, remove it
+            if (exp_df[exp_df["gene"] == gene_name]["exprval"] == "NA").all():
+                # print("Gene {} is all NA - dropping.".format(gene_name))
+                exp_df = exp_df.drop(exp_df[exp_df["gene"] == gene_name].index)
+                dropped += 1
+
+        print("Dropped {} genes".format(dropped))
+
+        # Save the current gene set
+        exp_df.to_csv("{}{}gene_{}.csv".format(save_path, save_prefix, gene_str), index=False)
+
+        # Increase indices to next gene set
+        start = curr_end
+    
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--start", type=int, action="store", default=0)
+    parser.add_argument("--end", type=int, action="store", default=55401)
+    parser.add_argument("--inc", type=int, action="store", default=1000)
+    parser.add_argument("--dtype", type=str, action="store", default="tpm")
+    parser.add_argument("--save_path", type=str, action="store", default="")
+    parser.add_argument("--save_prefix", type=str, action="store", default="")
+    args = parser.parse_args()
+
+    if not args.dtype in ["tpm", "fpkm"]:
+        print("dtype must be either 'tpm' or 'fpkm'.")
+        exit()
+    if args.save_prefix != "" and args.save_prefix[-1] != "_":
+        args.save_prefix += "_"
+
+    main(args.start, args.end, args.inc, args.dtype, args.save_path, args.save_prefix)

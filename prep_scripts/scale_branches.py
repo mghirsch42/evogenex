@@ -57,7 +57,7 @@ def main(tree_file, output_file, mult_factor):
 
     # Write to output
     tree.write(path=output_file, schema="newick")
-
+    # print(tree)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

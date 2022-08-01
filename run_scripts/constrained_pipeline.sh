@@ -9,4 +9,4 @@ while getopts t:r:d:o: flag; do
   esac
 done
 
-Rscript run_scripts/run_single_file_evogenex.R $TREE_FILE $REGIME_FILE $DATA_PATH $OUTPUT_FILE
+Rscript run_scripts/constrained_evogenex.R $TREE_FILE $REGIME_FILE $DATA_PATH $OUTPUT_FILE
