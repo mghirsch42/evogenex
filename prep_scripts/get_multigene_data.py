@@ -35,6 +35,10 @@ def main(start, end, inc, dtype, save_path, save_prefix):
 
             # Loop through the sublines (C1, C2, etc)
             for subline in exp_data.obs["clone"].unique(): 
+                
+                # C2 isn't in our tree, so skip it
+                if subline == "C2":
+                    continue
 
                 # Get the replicates (subclones) for this subline (C1_1, C1_2, etc)
                 subclones = exp_data[exp_data.obs["clone"] == subline].obs.index.tolist()
@@ -73,6 +77,11 @@ def main(start, end, inc, dtype, save_path, save_prefix):
             # If the gene has all NA values, remove it
             if (exp_df[exp_df["gene"] == gene_name]["exprval"] == "NA").all():
                 # print("Gene {} is all NA - dropping.".format(gene_name))
+                exp_df = exp_df.drop(exp_df[exp_df["gene"] == gene_name].index)
+                dropped += 1
+
+            # If the gene doesn't have a value for every species, remove it
+            elif (len(exp_df[exp_df["gene"] == gene_name]["species"].unique()) < 23):
                 exp_df = exp_df.drop(exp_df[exp_df["gene"] == gene_name].index)
                 dropped += 1
 
