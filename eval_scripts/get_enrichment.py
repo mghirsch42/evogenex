@@ -11,7 +11,7 @@ def main(query_file, ref_file, ann_data_set, save_file):
         lines = [l.rstrip() for l in lines]
         query_list = ",".join(lines)
     # print(query_list)
-
+    
     with open(ref_file, "r") as f:
         lines = f.readlines()
         lines = [l.rstrip() for l in lines]
@@ -41,11 +41,12 @@ def main(query_file, ref_file, ann_data_set, save_file):
     # print(request_url)
 
     r = requests.get(request_url)
+    print(r)
     # print(json.dumps(r.json(), indent=1))
     # print(json.dumps(r.json(), indent=1)[:25])
     df = pd.json_normalize(r.json()["results"]["result"])
     df = df[df["fdr"] < 0.05]
-    df = df.drop(["number_in_list"], axis=1)
+    # df = df.drop(["number_in_list"], axis=1)
 
     df.to_csv(save_file, index=False)
 

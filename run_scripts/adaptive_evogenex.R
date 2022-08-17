@@ -26,7 +26,26 @@ process_single_gene <- function(data_tall) {
   # loglikelihood ratio test EvoGeneX VS replicated Brownian motion
   ou2_vs_bm_pvalue <- 1 - pchisq((ou2_res$loglik - brown_res$loglik) * 2, (ou2_dof - brown_dof))
   ou2_vs_ou1_pvalue <- 1 - pchisq((ou2_res$loglik - brown_res$loglik) * 2, (ou2_dof - ou1_dof))
-  results <- tibble("ou2_vs_bm_pvalue" = ou2_vs_bm_pvalue, "ou2_vs_ou1_pvalue" = ou2_vs_ou1_pvalue)
+  results <- tibble("ou1_conv" = ou1_res$optim.diagn$convergence, 
+                    "ou1_theta" = ou1_res$theta,
+                    "ou1_alpha" = ou1_res$alpha,
+                    "ou1_sigma_sq" = ou1_res$sigma.sq,
+                    "ou1_gamma" = ou1_res$gamma,
+                    "ou1_loglik" = ou1_res$loglik,
+                    "ou2_conv" = ou2_res$optim.diagn$convergence, 
+                    "ou2_theta" = ou2_res$theta,
+                    "ou2_alpha" = ou2_res$alpha,
+                    "ou2_sigma_sq" = ou2_res$sigma.sq,
+                    "ou2_gamma" = ou2_res$gamma,
+                    "ou2_loglik" = ou2_res$loglik,
+                    "brown_conv" = brown_res$optim.diagn$convergence, 
+                    "brown_theta" = brown_res$theta,
+                    "brown_alpha" = brown_res$alpha,
+                    "brown_sigma_sq" = brown_res$sigma.sq,
+                    "brown_gamma" = brown_res$gamma,
+                    "brown_loglik" = brown_res$loglik,
+                    "ou2_vs_bm_pvalue" = ou2_vs_bm_pvalue, 
+                    "ou2_vs_ou1_pvalue" = ou2_vs_ou1_pvalue)
   return(results)
 }
 
