@@ -1,4 +1,3 @@
-from operator import mod
 import pandas as pd
 import os
 import argparse
@@ -14,13 +13,13 @@ def main(result_path, save_path, model, inverse):
             model_goal = "constrained"
     if model == "a":
         model_col = "adaptive"
-        cols = ["ensemble_id", "gene_name","ou2_vs_bm_pvalue","ou2_vs_ou1_pvalue","qvalue","adaptive"]
+        cols = ["ensemble_id", "gene_name"]
         if inverse:
             model_goal = "not-adaptive"
         else:
             model_goal = "adaptive"
 
-    results_df = pd.DataFrame()
+    results_df = pd.DataFrame(columns=cols)
 
     for f in [f for f in os.listdir(result_path) if ".csv" in f]:
         temp_df = pd.read_csv(result_path+f)
@@ -28,18 +27,33 @@ def main(result_path, save_path, model, inverse):
 
     results_df[["ensemble_id", "gene_name"]] = results_df["gene"].str.split("_", expand=True)
     results_df = results_df.drop("gene", axis=1)
-    results_df = results_df.reindex(columns=cols)
-    pos_res = results_df[results_df[model_col] == model_goal]
+    
+    df2 = pd.DataFrame(columns=["ensemble_id", "gene_name","ou1_conv","ou1_theta","ou1_alpha","ou1_sigma_sq","ou1_gamma","ou1_loglik","ou2_conv","ou2_theta","ou2_theta_base","theta_diff","ou2_alpha","ou2_sigma_sq","ou2_gamma","ou2_loglik","brown_conv","brown_theta","brown_sigma_sq","brown_gamma","brown_loglik","ou2_vs_bm_pvalue","ou2_vs_ou1_pvalue","adaptive"])
+
+    for g in results_df["gene_name"].unique():
+        sub = results_df[results_df["gene_name"] == g]  # Two entries - adaptive, then base
+        df2 = df2.append(sub.iloc[0]) # Add adaptive entry
+        df2.loc[df2["gene_name"] == g, "ou2_theta_base"] = sub["ou2_theta"].iloc[1] # Add base value
+
+    df2["theta_diff"] = df2["ou2_theta"] - df2["ou2_theta_base"]
+
+    # results_df = results_df.reindex(columns=cols)
+    pos_res = df2[df2[model_col] == model_goal]
+    pos_res = pos_res.drop(model_col, axis=1)
     # print(pos_res)
-    print(str(len(pos_res)) + " positive results out of " + str(len(results_df)))
+    print(str(len(pos_res)) + " positive results out of " + str(len(df2)))
 
     if save_path:
-        # genes = pos_res["gene_name"].tolist()
-        # with open(save_path, "w") as f:
-        #     f.writelines("\n".join(genes))
-        pos_res.to_csv(save_path)
-        # temp = results_df[["ensemble_id", "gene_name"]]
-        # temp.to_csv(save_path)
+        pos_res.to_csv(save_path + "gene_info.csv", index=False)
+        # with open(save_path+"genes.csv", "w") as f:
+        #     f.writelines("\n".join(pos_res["gene_name"].unique()))
+        
+        # results_df.to_csv(save_path + "gene_info.csv", index=False)
+        # with open(save_path+"genes.csv", "w") as f:
+        #     f.writelines("\n".join(results_df["gene_name"].unique()))
+
+    else:
+        print(pos_res)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -1,83 +1,87 @@
-from venv import create
 import pandas as pd
+import os
+import itertools
+import argparse
 
-def print_counts(orig_clade, orig_agg, lp_clade, lp_agg):
+def print_counts(df):
     print("Number of genes in each list")
-    print("Orig, clade: {}".format(len(orig_clade)))
-    print("Orig, agg: {}".format(len(orig_agg)))
-    print("LP, clade: {}".format(len(lp_clade)))
-    print("LP, agg: {}".format(len(lp_agg)))
-    all = pd.concat([orig_clade, orig_agg, lp_clade, lp_agg])
-    print("Total unique: {}".format(len(all["gene"].unique())))
-    print()
 
-def compare_trees(orig_clade, orig_agg, lp_clade, lp_agg):
-    print("Orig clade vs LP clade")
-    both = pd.merge(orig_clade, lp_clade, how="inner", on="gene")
-    # print(both)
-    print(len(both))
+    gb = df.groupby(["tree", "adpt"]).count()
+    print(gb["gene_name"])
 
-    print("Orig agg vs LP agg")
-    both = pd.merge(orig_agg, lp_agg, how="inner", on="gene")
-    # print(both)
-    print(len(both))
+def compare_trees(df):
+    
+    for adpt in df["adpt"].unique():
+        print("Adpt: {}".format(adpt))
+        tree_dfs = {}
+        for tree in df["tree"].unique():
+            tree_dfs[tree] = df[(df["tree"] == tree) & (df["adpt"] == adpt)]
+        for t1, t2 in itertools.combinations(tree_dfs.keys(), 2):
+            both = pd.merge(tree_dfs[t1], tree_dfs[t2], how="inner", on="gene_name")
+            print("{}, {}: {}".format(t1, t2, len(both)))
 
-def compare_adpt(orig_clade, orig_agg, lp_clade, lp_agg):
-    print("Orig clade vs Orig agg")
-    both = pd.merge(orig_clade, orig_agg, how="inner", on="gene")
-    # print(both)
-    print(len(both))
+def compare_adpt(df):
 
-    print("LP clade vs LP agg")
-    both = pd.merge(lp_clade, lp_agg, how="inner", on="gene")
-    # print(both)
-    print(len(both))
+    for tree in df["tree"].unique():
+        print("Tree: {}".format(tree))
+        adpt_dfs = {}
+        for adpt in df["adpt"].unique():
+            adpt_dfs[adpt] = df[(df["tree"] == tree) & (df["adpt"] == adpt)]
+        for t1, t2 in itertools.combinations(adpt_dfs.keys(), 2):
+            both = pd.merge(adpt_dfs[t1], adpt_dfs[t2], how="inner", on="gene_name")
+            print("{}, {}: {}".format(t1, t2, len(both)))
+    
+def compare_all(df):
+    print("Genes in all experiments:")
+    vcs = df["gene_name"].value_counts()
+    print(vcs[vcs==len(df["tree"].unique())*len(df["adpt"].unique())])
 
-def compare_all(orig_clade, orig_agg, lp_clade, lp_agg):
-    all = pd.concat([orig_clade, orig_agg, lp_clade, lp_agg])
-    vcs = all["gene"].value_counts()
-    print(vcs[vcs==4])
+def create_table(df, save_path):
 
-def create_table(orig_clade, orig_agg, lp_clade, lp_agg, save_path):
-    all_res = pd.concat([orig_clade, orig_agg, lp_clade, lp_agg])
-    all_genes = all_res[["ensemble_id", "gene_name"]]
+    df2 = df[["ensemble_id", "gene_name"]].drop_duplicates()
+    df2 = df2.reset_index(drop=True)
+    df2 = df2.fillna(0)
 
-    df = pd.DataFrame(columns=["ensemble_id", "gene_name", "orig_clade", "orig_agg", "scaled_clade", "scaled_agg"])
-    df[["ensemble_id", "gene_name"]] = all_genes.drop_duplicates()
-    df = df.reset_index(drop=True)
-    df = df.fillna(0)
+    for tree in df["tree"].unique():
+        for adpt in df["adpt"].unique():
+            curr_df = df[(df["tree"] == tree) & (df["adpt"] == adpt)]
+            curr_genes = curr_df["gene_name"].to_list()
+            df2["{}_{}".format(tree, adpt)] = [curr_df[curr_df["gene_name"] == g]["qvalue"].values[0] if g in curr_genes else 1 for g in df2["gene_name"]]
 
-    orig_clade_genes = orig_clade["gene_name"].to_list()
-    orig_agg_genes = orig_agg["gene_name"].to_list()
-    lp_clade_genes = lp_clade["gene_name"].to_list()
-    lp_agg_genes = lp_agg["gene_name"].to_list()
+    print(df2)
 
-    df["orig_clade"] = [orig_clade[orig_clade["gene_name"] == g]["qvalue"].values[0] if g in orig_clade_genes else 0 for g in df["gene_name"] ]
-    df["orig_agg"] = [orig_agg[orig_agg["gene_name"] == g]["qvalue"].values[0] if g in orig_agg_genes else 0 for g in df["gene_name"] ]
-    df["lp_clade"] = [lp_clade[lp_clade["gene_name"] == g]["qvalue"].values[0] if g in lp_clade_genes else 0 for g in df["gene_name"] ]
-    df["lp_agg"] = [lp_agg[lp_agg["gene_name"] == g]["qvalue"].values[0] if g in lp_agg_genes else 0 for g in df["gene_name"] ]
+    if save_path:
+        df2.to_csv(save_path, index=False)
 
-    df.to_csv(save_path, index=False)
-
-def main():
-    base_path = "results/tpm_allrep2/"
+def main(base_path):
     orig_path = base_path + "orig/gene_lists/"
-    lp_path = base_path + "lp_scaled/gene_lists/"
+    scaled_path = base_path + "lp_scaled/gene_lists/"
 
-    orig_clade = pd.read_csv(orig_path+"adpt_clade/adpt_clade_gene_info.csv")
-    # orig_clade.columns=["gene"]
-    orig_agg = pd.read_csv(orig_path+"adpt_agg/adpt_agg_gene_info.csv")    
-    # orig_agg.columns=["gene"]
-    lp_clade = pd.read_csv(lp_path+"adpt_clade/adpt_clade_gene_info.csv")
-    # lp_clade.columns=["gene"]
-    lp_agg = pd.read_csv(lp_path+"adpt_agg/adpt_agg_gene_info.csv")
-    # lp_agg.columns=["gene"]
+    df = pd.DataFrame()
+    for folder in [f for f in os.listdir(orig_path) if "adpt" in f]:
+        f = [f for f in os.listdir(orig_path+folder+"/") if "gene_info" in f][0]
+        temp = pd.read_csv(orig_path+folder+"/"+f)
+        temp["tree"] = "orig"
+        temp["adpt"] = folder.split("_")[-1]
+        df = df.append(temp)
+    for folder in [f for f in os.listdir(scaled_path) if "adpt" in f]:
+        f = [f for f in os.listdir(scaled_path+folder+"/") if "gene_info" in f][0]
+        temp = pd.read_csv(scaled_path+folder+"/"+f, )
+        temp["tree"] = "scaled"
+        temp["adpt"] = folder.split("_")[-1]
+        df = df.append(temp)
 
-    # print_counts(orig_clade, orig_agg, lp_clade, lp_agg)
-    # compare_trees(orig_clade, orig_agg, lp_clade, lp_agg)
-    # compare_adpt(orig_clade, orig_agg, lp_clade, lp_agg)
-    # compare_all(orig_clade, orig_agg, lp_clade, lp_agg)
-    create_table(orig_clade, orig_agg, lp_clade, lp_agg, "results/tpm_allrep2/gene_comp.csv")
+    # print(df["qvalue"])
+
+    # print_counts(df)
+    # compare_trees(df)
+    # compare_adpt(df)
+    compare_all(df)
+    # create_table(df, "results/tpm_allrep2/gene_comp.csv")
+    # create_table(df, "temp.csv")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--base_path", type=str, default="results/tpm_allrep2/")
+    args = parser.parse_args()
+    main(args.base_path)
