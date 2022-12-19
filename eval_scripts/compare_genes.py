@@ -60,23 +60,27 @@ def main(base_path):
     df = pd.DataFrame()
     for folder in [f for f in os.listdir(orig_path) if "adpt" in f]:
         f = [f for f in os.listdir(orig_path+folder+"/") if "gene_info" in f][0]
-        temp = pd.read_csv(orig_path+folder+"/"+f)
+        if "agg" in folder or "clade" in folder: sep = " "
+        else: sep = ","
+        temp = pd.read_csv(orig_path+folder+"/"+f, sep=sep)
         temp["tree"] = "orig"
         temp["adpt"] = folder.split("_")[-1]
         df = df.append(temp)
     for folder in [f for f in os.listdir(scaled_path) if "adpt" in f]:
         f = [f for f in os.listdir(scaled_path+folder+"/") if "gene_info" in f][0]
-        temp = pd.read_csv(scaled_path+folder+"/"+f, )
+        if "agg" in folder or "clade" in folder: sep = " "
+        else: sep = ","
+        temp = pd.read_csv(scaled_path+folder+"/"+f, sep=sep)
         temp["tree"] = "scaled"
         temp["adpt"] = folder.split("_")[-1]
         df = df.append(temp)
 
     # print(df["qvalue"])
 
-    # print_counts(df)
+    print_counts(df)
     # compare_trees(df)
     # compare_adpt(df)
-    compare_all(df)
+    # compare_all(df)
     # create_table(df, "results/tpm_allrep2/gene_comp.csv")
     # create_table(df, "temp.csv")
 

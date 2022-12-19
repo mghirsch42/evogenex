@@ -61,10 +61,11 @@ def main(result_path, save_path, model, inverse):
     pos_res = results_df[results_df[model_col] == model_goal]
     pos_res = pos_res.drop(model_col, axis=1)
 
-    print(str(len(pos_res)) + " positive results out of " + str(len(df2)))
+    print(str(len(pos_res)) + " positive results out of " + str(len(results_df)))
 
     if save_path:
         pos_res.to_csv(save_path + "gene_info.csv", index=False)
+        results_df.to_csv(save_path + "all_results.csv", index=False)
         # with open(save_path+"genes.csv", "w") as f:
         #     f.writelines("\n".join(pos_res["gene_name"].unique()))
         

@@ -13,16 +13,16 @@ ref_genes <- read.csv(ref_file)
 query_genes <- query_genes %>% separate(ensemble_id, c("ensemble_id", NA))
 ref_genes <- ref_genes %>% separate(ensemble_id, c("ensemble_id", NA))
 
-ego_bp <- enrichGO(
-                    gene = query_genes$ensemble_id,
-                    universe = ref_genes$ensemble_id,
-                    OrgDb = "org.Mm.eg.db",
-                    keyType = "ENSEMBL",
-                    ont = "BP",
-                    pvalueCutoff = .05,
-                    qvalueCutoff = .05,
-                    readable = TRUE
-                )
+# ego_bp <- enrichGO(
+#                     gene = query_genes$ensemble_id,
+#                     universe = ref_genes$ensemble_id,
+#                     OrgDb = "org.Mm.eg.db",
+#                     keyType = "ENSEMBL",
+#                     ont = "BP",
+#                     pvalueCutoff = .05,
+#                     qvalueCutoff = .05,
+#                     readable = TRUE
+#                 )
 ego_cc <- enrichGO(
                     gene = query_genes$ensemble_id,
                     universe = ref_genes$ensemble_id,
@@ -54,12 +54,13 @@ ego_mf <- enrichGO(
 
 # dev.off()
 
-ego_bp_df <- as.data.frame(ego_bp)
-ego_bp_df$type <- "bio"
+# ego_bp_df <- as.data.frame(ego_bp)
+# ego_bp_df$type <- "bio"
 ego_cc_df <- as.data.frame(ego_cc)
 ego_cc_df$type <- "cell"
 ego_mf_df <- as.data.frame(ego_mf)
 ego_mf_df$type <- "mol"
-ego_all <- rbind(ego_bp_df, ego_cc_df, ego_mf_df)
+# ego_all <- rbind(ego_bp_df, ego_cc_df, ego_mf_df)
+ego_all <- rbind(ego_cc_df, ego_mf_df)
 
 write.csv(ego_all, save_file, row.names=FALSE)
