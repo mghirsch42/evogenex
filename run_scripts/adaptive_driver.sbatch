@@ -1,13 +1,14 @@
 #!/bin/bash
 
 #SBATCH --qos=throughput
+###SBATCH --exclude=heron[00-11]
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=36gb
 #SBATCH --exclusive
-#SBATCH --time=00:30:00
+#SBATCH --time=05:00:00
 #SBATCH --output=output/%x_%j.out
 #SBATCH --error=output/%x_%j.err
 
