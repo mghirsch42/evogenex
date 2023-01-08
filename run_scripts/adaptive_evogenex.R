@@ -68,7 +68,8 @@ results <- (
   data_tall
   %>% group_by(gene)
   %>% summarize(process_single_gene(cur_data()), .groups = "keep")
-  %>% mutate(adaptive = ifelse(max(ou2_vs_bm_pvalue, ou2_vs_ou1_pvalue) < fdr_cutoff, "adaptive", "not-adaptive"))
+  %>% mutate(qvalue = p.adjust(max(ou2_vs_bm_pvalue, ou2_vs_ou1_pvalue), method = "fdr"))
+  %>% mutate(adaptive = ifelse(qvalue < fdr_cutoff, "adaptive", "not-adaptive"))
 )
 # print(results)
 write.csv(results, output_file, row.names=FALSE)
