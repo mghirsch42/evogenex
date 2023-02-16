@@ -1,4 +1,4 @@
-# .libPaths("~/include/R/") # Needed for cluster, comment for local
+.libPaths("~/include/R/") # Needed for cluster, comment for local
 
 library(tidyverse)
 library(EvoGeneX)
