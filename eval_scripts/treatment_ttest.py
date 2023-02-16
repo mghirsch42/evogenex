@@ -25,8 +25,12 @@ print("Calculating neutral genes")
 neutral_genes = all_data.groupby("gene_name").filter(lambda gene_group: not (gene_group["adaptive"] == "adaptive").any())
 print(len(neutral_genes))
 b_gamma = neutral_genes[neutral_genes["brown_gamma"] < 10**10]["brown_gamma"]
+print(np.mean(np.log10(b_gamma)))
+print(np.std(np.log10(b_gamma)))
 b_gamma_cutoff = np.mean(np.log10(b_gamma)) + 3*np.std(np.log10(b_gamma)) 
 print(b_gamma_cutoff)
+print(10**np.mean(np.log10(b_gamma)))
+print(10**b_gamma_cutoff)
 exit()
 neutral_genes = neutral_genes[["gene_name", "brown_gamma", "qvalue"]]
 neutral_genes = neutral_genes.groupby("gene_name").agg(
@@ -47,8 +51,11 @@ neutral_expr = expr_data[expr_data["GENE"].isin(neutral_genes["gene_name"])]
 response_scalers = neutral_expr[responders["SYMBOL"]].mean()
 nonresponse_scalers = neutral_expr[nonresponders["SYMBOL"]].mean()
 control_scalers = neutral_expr[controls["SYMBOL"]].mean()
-# print(response_scalers)
-# exit()
+print(response_scalers.mean())
+print(response_scalers.std())
+print(nonresponse_scalers.mean())
+print(nonresponse_scalers.std())
+exit()
 
 print("Running t-tests")
 t_results = []
