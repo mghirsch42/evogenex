@@ -36,12 +36,14 @@ def main(result_path, save_path, model, inverse):
         results_df = results_df.append(temp_df, ignore_index=True)
 
     # The results will have the ensemble id and gene name as a single column - split into two
+<<<<<<< HEAD
     if results_df["gene"].astype(str).str.contains("_").all():
         results_df[["ensemble_id", "gene_name"]] = results_df["gene"].str.split("_", expand=True)
     else:
         results_df["ensemble_id"] = results_df["gene"]
         results_df["gene_name"] = results_df["gene"]
     results_df = results_df.drop("gene", axis=1)
+    
     # If we have an adaptive experiment, it will have two rows, one with the ou2 base theta and one with the ou2 adaptive theta
     # So we need to combine those into one
     if model == "a":
@@ -50,8 +52,10 @@ def main(result_path, save_path, model, inverse):
         new_cols.insert(theta_idx+1, "ou2_theta_base")
         new_cols.insert(theta_idx+2, "theta_diff")
         df2 = pd.DataFrame(columns=new_cols)
-
+        # print(results_df)
+        # exit()
         for g in results_df["gene_name"].unique():
+            # print(g)
             sub = results_df[results_df["gene_name"] == g]  # Two entries - adaptive, then base
             df2 = df2.append(sub.iloc[0]) # Add adaptive entry
             df2.loc[df2["gene_name"] == g, "ou2_theta_base"] = sub["ou2_theta"].iloc[1] # Add base value
