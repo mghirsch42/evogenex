@@ -1,12 +1,12 @@
 library(tidyr)
 library(dplyr)
 library(clusterProfiler)
-source("eval2/ora/ora_functions.R")
+source("eval_scripts/enrichment/ora/ora_functions.R")
 
 method <- "kegg" # go or kegg
-group <- "positive" # positive, negative, or all
-save_file <- "results/tpm_allrep2/orig/gene_lists/adpt_agg/enrichment/ora_kegg_positive.csv"
-results_file <- "results/tpm_allrep2/orig/gene_lists/adpt_agg/all_results.csv"
+group <- "" # positive, negative, or empty for all
+save_file <- "results/tpm_allrep2/orig/gene_lists/adpt_three/enrichment/ora_kegg.csv"
+results_file <- "results/tpm_allrep2/orig/gene_lists/adpt_three/all_results.csv"
 results <- read.csv(results_file)
 
 query_genes <- (

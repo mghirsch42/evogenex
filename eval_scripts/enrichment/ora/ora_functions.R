@@ -3,10 +3,14 @@ library(dplyr)
 library(clusterProfiler)
 
 kegg_enrich <- function(query_genes, ref_genes, save_file) {
+    # print(nrow(query_genes))
     query_uniprot <- bitr(query_genes$gene_name, fromType="SYMBOL", toType="UNIPROT", OrgDb="org.Mm.eg.db")
     ref_uniprot <- bitr(ref_genes$gene_name, fromType="SYMBOL", toType="UNIPROT", OrgDb="org.Mm.eg.db")
-    print(head(query_uniprot$UNIPROT))
+    print(head(ref_uniprot$UNIPROT, quote=TRUE))
+    # write.csv(query_uniprot$UNIPROT, file=save_file, row.names=FALSE, quote=FALSE)
+    print(typeof(ref_uniprot$UNIPROT))
     # quit()
+    print(head(ref_uniprot$UNIPROT))
     ego_kegg <- enrichKEGG(
                         gene = query_uniprot$UNIPROT,
                         universe = ref_uniprot$UNIPROT,
@@ -17,7 +21,7 @@ kegg_enrich <- function(query_genes, ref_genes, save_file) {
                         qvalueCutoff = .05
     )
     print(ego_kegg)
-    write.csv(ego_kegg, save_file, row.names = FALSE)
+    # write.csv(ego_kegg, save_file, row.names = FALSE)
 }
 
 go_enrich <- function(query_genes, ref_genes, save_file) {

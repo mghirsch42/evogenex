@@ -1,7 +1,7 @@
 library(tidyr)
 library(dplyr)
 library(clusterProfiler)
-source("eval2/ora/ora_functions.R")
+source("eval_scripts/enrichment/ora/ora_functions.R")
 
 method = "kegg"
 # args <- commandArgs(trailingOnly=TRUE)

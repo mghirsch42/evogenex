@@ -1,7 +1,7 @@
 library(tidyr)
 library(dplyr)
 library(clusterProfiler)
-source("eval2/gsea/gsea_functions.R")
+source("eval_scripts/enrichment/gsea/gsea_functions.R")
 
 method <- "kegg" # go or kegg
 group <- "positive" # positive, negative, or all

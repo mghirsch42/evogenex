@@ -1,7 +1,7 @@
 library(tidyr)
 library(dplyr)
 library(clusterProfiler)
-source("eval2/gsea/gsea_functions.R")
+source("eval_scripts/enrichment/gsea/gsea_functions.R")
 
 data_file <- "results/mouse_treatment/ttest_allavg_details.csv"
 save_path <- "results/mouse_treatment/gsea_go/"
