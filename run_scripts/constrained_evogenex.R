@@ -14,9 +14,8 @@ output_file <- args[4]
 
 # Function to process a single gene
 process_single_gene <- function(data_tall) {
-  ou_res <- evog$fitSlow(data_tall, format = "tall", alpha = 0.1, gamma = 0.01)
+  ou_res <- evog$fit(data_tall, format = "tall", alpha = 0.1, gamma = 0.01)
   brown_res <- brown$fit(data_tall, format = "tall", gamma = 0.01)
-  
   # loglikelihood ratio test EvoGeneX VS replicated Brownian motion
   pvalue <- 1 - pchisq((ou_res$loglik - brown_res$loglik) * 2, (ou_dof - brown_dof))
 }
@@ -40,7 +39,7 @@ results <- (
   data_tall
   %>% group_by(gene)
   %>% summarize(pvalue = process_single_gene(cur_data()), .groups = "keep")
-  %>% ungroup()
+  # %>% ungroup()
   %>% mutate(qvalue = p.adjust(pvalue, method = "fdr"))
   %>% mutate(constrained_vs_neutral = ifelse(qvalue < fdr_cutoff, "constrained", "neutral"))
 )

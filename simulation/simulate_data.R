@@ -78,19 +78,21 @@ repnames = paste0('R', 1:nrep)
 dat = data.frame()
 
 for (i in 1:ngene) {
-  t = OUwie.sim(tree, regimes, theta0 = theta_root, alpha = c(alpha,alpha), sigma.sq = c(sigmasq, sigmasq), theta=c(theta0, theta1), root.age=max.age)
+  t = OUwie.sim(tree, regimes, theta0 = theta_root, alpha = c(alpha,alpha), sigma.sq = c(sigmasq, sigmasq), theta=c(theta0, theta1), root.age=max.age, get.all=TRUE)
   #print(t)
-  epsilon = matrix(rnbinom(nterm*nrep, size=r, mu=t$X), nterm, nrep) 
-  for (s in 1:nterm) {
-    for (j in 1:nrep) {
-      if (runif(1, 0, 1) < rep_drop) {
-        epsilon[s, j] = NA
-      }
-    }
-  }
-  Y = data.frame(epsilon)
-  names(Y) = repnames
-  Y$species = t$Genus_species
+  # epsilon = matrix(rnbinom(nterm*nrep, size=r, mu=t$X), nterm, nrep) 
+  # for (s in 1:nterm) {
+  #   for (j in 1:nrep) {
+  #     if (runif(1, 0, 1) < rep_drop) {
+  #       epsilon[s, j] = NA
+  #     }
+  #   }
+  # }
+  # Y = data.frame(epsilon)
+  Y = data.frame(t)
+  print(Y)
+  # names(Y) = repnames
+  # Y$species = t$Genus_species
   gene = i
   dat = rbind(dat, data.frame(gene, Y))
 }

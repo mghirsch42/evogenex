@@ -12,11 +12,11 @@ results = pd.DataFrame()
 
 for regime in ["agg", "clade", "1_4_22", "3_10_14"]:
     if subset == "all":
-        fname = base_path + "adpt_{}/enrichment/{}_{}.csv".format(regime, method, ds)
+        fname = base_path + "adpt_{}/enrichment/{}_diff_expr_{}.csv".format(regime, method, ds)
         if not os.path.isfile(fname): continue
         enrich = pd.read_csv(fname)
     else:
-        fname = base_path + "adpt_{}/enrichment/{}_{}_{}.csv".format(regime, method, ds, subset)
+        fname = base_path + "adpt_{}/enrichment/{}_diff_expr_{}_{}.csv".format(regime, method, ds, subset)
         if not os.path.isfile(fname): continue
         enrich = pd.read_csv(fname)
     enrich["regime"] = regime
@@ -38,5 +38,5 @@ plt.title("{} {} {} adaptive genes".format(method, ds, subset))
 plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 plt.yticks(fontsize=6)
 plt.tight_layout()
-plt.savefig("figures/enrichment/dot_{}_{}_{}.png".format(method, ds, subset))
-# plt.show()
+# plt.savefig("figures/enrichment/dot_{}_{}_{}.png".format(method, ds, subset))
+plt.show()

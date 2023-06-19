@@ -6,6 +6,11 @@ import argparse
 
 
 def main(start, end, inc, dtype, save_path, save_prefix):
+
+    # Load the data
+    sc_data = tsc.datasets.sublines_scrnaseq()
+    exp_data = sc_data["mutation"]
+
     while start < end:
 
         # Set boundary values for this gene set
@@ -18,9 +23,6 @@ def main(start, end, inc, dtype, save_path, save_prefix):
 
         print("Running for genes " + gene_str)
 
-        # Load the data
-        sc_data = tsc.datasets.sublines_scrnaseq()
-        exp_data = sc_data["expression"]
 
         # Create new dataframe for this gene set
         exp_df = pd.DataFrame(columns=["gene", "species", "replicate", "exprval"])
@@ -104,9 +106,9 @@ if __name__ == "__main__":
     parser.add_argument("--save_prefix", type=str, action="store", default="")
     args = parser.parse_args()
 
-    if not args.dtype in ["tpm", "fpkm"]:
-        print("dtype must be either 'tpm' or 'fpkm'.")
-        exit()
+    # if not args.dtype in ["tpm", "fpkm"]:
+    #     print("dtype must be either 'tpm' or 'fpkm'.")
+    #     exit()
     if args.save_prefix != "" and args.save_prefix[-1] != "_":
         args.save_prefix += "_"
 

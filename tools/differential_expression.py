@@ -6,15 +6,17 @@ from scipy import stats
 from statsmodels.stats.multitest import multipletests
 import numpy as np
 
-#base_path = "data/tpm_allrep2_raw/"
-base_path = "data/simulated/sim_neut_t1_r8/"
+base_path = "data/simulated/sim_neut_t10_r8/"
+# base_path = "data/simulated/sim_neut_t1_r8/"
 regime ="agg_resolved"
 regime_file = "regime_files/resolved/{}.csv".format(regime)
-save_path = "results/simulated/sim_neut_clade_t1_r8/"
+# save_path = "results/simulated/sim_neut_clade_t1_r8/"
+# save_path = "results/simulated2/agg_sim_agg_run/differential_expression.csv"
+save_path = None
 #save_path = None
-files_together = False # True if you want to read all files in folder and perform differential expression together, false to do de on each file individually
+files_together = True # True if you want to read all files in folder and perform differential expression together, false to do de on each file individually
 
-def run_de(df, save_file):
+def run_de(df, r1_taxa, r2_taxa, save_file):
     df["aggressive"] = df["species"].isin(r2_taxa)
 
     r1_data = df[df["species"].isin(r1_taxa)]
@@ -23,7 +25,7 @@ def run_de(df, save_file):
     results = []
 
     for gene in df["gene"].unique():
-        #ensemble_id, gene_name = gene.split("_")
+        # ensemble_id, gene_name = gene.split("_")
         ensemble_id = gene
         gene_name = gene
         curr_data = df[df["gene"] == gene]
@@ -58,11 +60,11 @@ if files_together:
     for f in os.listdir(base_path):
         temp = pd.read_csv(base_path + f)
         df = df.append(temp, ignore_index = True)
-    run_de(df, save_path)
+    run_de(df, r1_taxa, r2_taxa, save_path)
 else:
     for f in os.listdir(base_path):
         df = pd.read_csv(base_path + f)
         if save_path:
-            run_de(df, save_path + f[:-4] +  "/de.csv")
+            run_de(df, r1_taxa, r2_taxa, save_path + f[:-4] +  "/differential_expression.csv")
         else:
-            run_de(df, save_path)
+            run_de(df, r1_taxa, r2_taxa, save_path)

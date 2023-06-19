@@ -3,7 +3,7 @@ import dendropy
 
 result = [["node", "node2", "regime"]]
 
-tree = dendropy.Tree.get(path="tree_files/resolved/sc-bwes-cons-resolved-10.tree", schema="newick")
+tree = dendropy.Tree.get(path="tree_files/resolved/clade_sub/sc-bwes-cons-resolved-10-clade.tree", schema="newick")
 
 for leaf in tree.leaf_nodes():
     result.append([leaf.taxon.label, "", "global"])
@@ -23,6 +23,6 @@ for leaf1 in tree.leaf_nodes():
         result.append([leaf1.taxon.label, leaf2.taxon.label, "global"])
         internal_nodes.append(anc)
 
-with open("regime_files/single_resolved.csv", "w", newline="") as f:
+with open("regime_files/clade_sub/single_resolved.csv", "w", newline="") as f:
     writer = csv.writer(f)
     writer.writerows(result)

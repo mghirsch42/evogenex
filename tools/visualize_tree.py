@@ -20,9 +20,9 @@ def main(newick_file, regime_file, show, output_file):
             mode = row["regime"]
             ns = NodeStyle()
             ns["size"] = 12
-            if mode == "aggressive":
+            if mode == "aggressive_nonresponder":
                 ns["fgcolor"] = "red"
-            elif mode == "partaggressive":
+            elif mode == "aggressive_responder":
                 ns["fgcolor"] = "blue"
             else:
                 ns["fgcolor"] = "black"

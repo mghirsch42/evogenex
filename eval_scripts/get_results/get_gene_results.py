@@ -36,7 +36,6 @@ def main(result_path, save_path, model, inverse):
         results_df = results_df.append(temp_df, ignore_index=True)
 
     # The results will have the ensemble id and gene name as a single column - split into two
-<<<<<<< HEAD
     if results_df["gene"].astype(str).str.contains("_").all():
         results_df[["ensemble_id", "gene_name"]] = results_df["gene"].str.split("_", expand=True)
     else:
