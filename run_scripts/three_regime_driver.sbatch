@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --qos=throughput
-###SBATCH --exclude=heron[00-11]
+#SBATCH --exclude=heron[00-11]
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1

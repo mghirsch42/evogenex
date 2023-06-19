@@ -1,4 +1,4 @@
-#.libPaths("~/include/R/") # Needed for cluster
+.libPaths("~/include/R/") # Needed for cluster
 
 library(tidyverse)
 library(EvoGeneX)
@@ -14,7 +14,7 @@ output_file <- args[4]
 
 # Function to process a single gene
 process_single_gene <- function(data_tall) {
-  ou_res <- evog$fitSlow(data_tall, format = "tall", alpha = 0.1, gamma = 0.01)
+  ou_res <- evog$fit(data_tall, format = "tall", alpha = 0.1, gamma = 0.01)
   brown_res <- brown$fit(data_tall, format = "tall", gamma = 0.01)
   
   # loglikelihood ratio test EvoGeneX VS replicated Brownian motion

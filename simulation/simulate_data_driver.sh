@@ -1,25 +1,16 @@
 #!/bin/bash
 
-#tree_file="tree_files/resolved/sc-bwes-cons-resolved-10.tree"
-#outpath="test.csv"
-#regime_file="regime_files/resolved/agg_resolved.csv"
-
 tree_file=$1
 regime_file=$2
 outpath=$3
 
 theta_root=150
 theta_ratios=( 1.1 1.08 1.06 1.04 1.02 )
-#theta_ratios=( 1.1 1.06 1.02 )
-#sigmasqs=( .15 1.5 15 )
-sigmasqs=( 37.5 )
-rs=( 10 100 1000 )
-#rs=( 10 1000 )
-alphas=( .125 1 8 16 )
-#alphas=( 16 )
+sigmasqs=( .15 1.5 15 )
+rs=( 100 150 200 )
+alphas=( .125 1 8 )
 ngene=100
 nrep=8
-#nrep=5
 rep_drop=.1
 
 for theta_ratio in "${theta_ratios[@]}"; do
@@ -35,16 +26,16 @@ for theta_ratio in "${theta_ratios[@]}"; do
                     $outfile \
                     $regime_file \
                     $theta_root \
-                    $theta_small \
                     $theta_large \
+                    $theta_small \
                     $sigmasq \
                     $r \
                     $alpha \
                     $ngene \
                     $nrep \
                     $rep_drop \
-                    "nonaggressive" \
-                    "aggressive"
+                    "backgrond" \
+                    "selected"
             done
         done
     done

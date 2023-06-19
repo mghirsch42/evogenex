@@ -15,7 +15,6 @@
 module load Python3/3.8.1
 
 source ../env/bin/activate
-
 RESULT_PATH=$1
 
 for f in $RESULT_PATH*; do
@@ -26,13 +25,12 @@ for f in $RESULT_PATH*; do
     else
         exp_folder=$f
     fi
-    echo $exp_folder
     if [ ! -f ${exp_folder}gene_info.csv ]; then
+        echo $exp_folder
         python3 eval_scripts/get_results/get_gene_results.py $exp_folder/ a -s $exp_folder/
     fi
 done
 
-echo "done with python"
 module load R/4.1.2/3.14
 
 for exp_folder in $RESULT_PATH*/; do

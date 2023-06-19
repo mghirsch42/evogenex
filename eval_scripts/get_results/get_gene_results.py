@@ -34,9 +34,7 @@ def main(result_path, save_path, model, inverse):
     for f in [f for f in os.listdir(result_path) if ".csv" in f]:
         temp_df = pd.read_csv(result_path+f)
         results_df = results_df.append(temp_df, ignore_index=True)
-
     # The results will have the ensemble id and gene name as a single column - split into two
-<<<<<<< HEAD
     if results_df["gene"].astype(str).str.contains("_").all():
         results_df[["ensemble_id", "gene_name"]] = results_df["gene"].str.split("_", expand=True)
     else:
@@ -52,10 +50,7 @@ def main(result_path, save_path, model, inverse):
         new_cols.insert(theta_idx+1, "ou2_theta_base")
         new_cols.insert(theta_idx+2, "theta_diff")
         df2 = pd.DataFrame(columns=new_cols)
-        # print(results_df)
-        # exit()
         for g in results_df["gene_name"].unique():
-            # print(g)
             sub = results_df[results_df["gene_name"] == g]  # Two entries - adaptive, then base
             df2 = df2.append(sub.iloc[0]) # Add adaptive entry
             df2.loc[df2["gene_name"] == g, "ou2_theta_base"] = sub["ou2_theta"].iloc[1] # Add base value
@@ -64,7 +59,6 @@ def main(result_path, save_path, model, inverse):
         df2["theta_diff"] = df2["ou2_theta"] - df2["ou2_theta_base"]
 
         results_df = df2
-
     pos_res = results_df[results_df[model_col] == model_goal]
     pos_res = pos_res.drop(model_col, axis=1)
 
@@ -73,13 +67,7 @@ def main(result_path, save_path, model, inverse):
     if save_path:
         pos_res.to_csv(save_path + "gene_info.csv", index=False)
         results_df.to_csv(save_path + "all_results.csv", index=False)
-        # with open(save_path+"genes.csv", "w") as f:
-        #     f.writelines("\n".join(pos_res["gene_name"].unique()))
         
-        # results_df.to_csv(save_path + "gene_info.csv", index=False)
-        # with open(save_path+"genes.csv", "w") as f:
-        #     f.writelines("\n".join(results_df["gene_name"].unique()))
-
     else:
         print(pos_res)
         print(pos_res.columns)

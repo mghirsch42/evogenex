@@ -4,6 +4,7 @@ library(OUwie)
 library(phylobase)
 library(phytools)
 library(tidyr)
+library(dplyr)
 
 # Simulate data with adaptive evolution with the same alpha and sigma squared
 
@@ -67,19 +68,15 @@ regimes = read.csv(regime_file, stringsAsFactors = FALSE)
 regimes[regimes == regime0] = 1 # relabel the regimes so OUSim will apply the correct theta
 regimes[regimes == regime1] = 2
 tree$node.label = regimes$reg[(nterm+1):N]  # label the tree with the regimes
-#print(tree)
-#print(regimes)
 regimes = regimes[1:nterm,] # take only the leaves
 regimes$species = tree$tip.label
 regimes = regimes[, c('species', 'regime')]
-#print(regimes)
 
 repnames = paste0('R', 1:nrep)
 dat = data.frame()
 
 for (i in 1:ngene) {
   t = OUwie.sim(tree, regimes, theta0 = theta_root, alpha = c(alpha,alpha), sigma.sq = c(sigmasq, sigmasq), theta=c(theta0, theta1), root.age=max.age)
-  #print(t)
   epsilon = matrix(rnbinom(nterm*nrep, size=r, mu=t$X), nterm, nrep) 
   for (s in 1:nterm) {
     for (j in 1:nrep) {
@@ -95,5 +92,7 @@ for (i in 1:ngene) {
   dat = rbind(dat, data.frame(gene, Y))
 }
 dat = gather(dat, replicate, exprval, all_of(repnames))
-#write.table(dat[c('gene', 'species', repnames)], file=outfile, sep='\t', quote=F, row.names=F, col.names=T)
+dat <- na.omit(dat)
+write.table(dat, file=paste(outfile,"raw.csv", sep="_"), sep=',', quote=F, row.names=F, col.names=T)
+dat <- dat %>% mutate(exprval = log2(1+exprval))
 write.table(na.omit(dat), file=outfile, sep=',', quote=F, row.names=F, col.names=T)

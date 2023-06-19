@@ -1,9 +1,9 @@
-#!/usr/bin/env Rscript
 .libPaths("~/include/R/")
 library(OUwie)
 library(phylobase)
 library(phytools)
 library(tidyr)
+library(dplyr)
 
 # Simulate data with adaptive evolution with the same alpha and sigma squared
 
@@ -57,7 +57,6 @@ repnames = paste0('R', 1:nrep)
 dat = data.frame()
 for (i in 1:ngene) {
   t = OUwie.sim(tree, regimes, theta0 = theta_root, alpha=c(10e-10, 10e-10), sigma.sq = c(sigmasq, sigmasq), theta=c(theta_root,theta_root), root.age=max.age)
-  #print(t)
   epsilon = matrix(rnbinom(nterm*nrep, size=r, mu=t$X), nterm, nrep) 
   for (s in 1:nterm) {
     for (j in 1:nrep) {
@@ -73,4 +72,7 @@ for (i in 1:ngene) {
   dat = rbind(dat, data.frame(gene, Y))
 }
 dat = gather(dat, replicate, exprval, all_of(repnames))
-write.table(na.omit(dat), file=outfile, sep=',', quote=F, row.names=F, col.names=T)
+dat <- na.omit(dat)
+write.table(dat, file=paste(outfile,"_raw.csv", sep=""), sep=',', quote=F, row.names=F, col.names=T)
+dat <- dat %>% mutate(exprval = log2(1+exprval))
+write.table(dat, file=outfile, sep=",", quote=F, row.names=F, col.names=T)

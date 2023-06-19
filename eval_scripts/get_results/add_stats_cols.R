@@ -1,3 +1,4 @@
+.libPaths("~/include/R/")
 library(tidyverse)
 library(dplyr)
 
