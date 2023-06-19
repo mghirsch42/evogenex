@@ -4,12 +4,10 @@ tree_file=$1
 outpath=$2
 
 theta_root=150
-#sigmasqs=( .15 1.5 15 )
-sigmasqs=( .15 15 )
-#rs=( 10 100 1000 )
-rs=( 10 1000 )
+sigmasqs=( .15 1.5 15 )
+rs=( 100 150 200 )
 ngene=100
-nrep=5
+nrep=8
 rep_drop=.1
 
 for sigmasq in "${sigmasqs[@]}"; do
