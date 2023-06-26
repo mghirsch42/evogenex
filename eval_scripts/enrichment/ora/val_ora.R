@@ -4,11 +4,8 @@ library(clusterProfiler)
 source("eval_scripts/enrichment/ora/ora_functions.R")
 
 method = "kegg"
-# args <- commandArgs(trailingOnly=TRUE)
-# query_file <- args[1]
-# save_file <- args[3]
 data_file <- "results/mouse_treatment/ttest_allavg_details.csv"
-save_path <- "results/mouse_treatment/ora_kegg/"
+save_path <- "results/mouse_treatment/ora_kegg_entrez/"
 
 data <- read.csv(data_file)
 ref_genes <- data

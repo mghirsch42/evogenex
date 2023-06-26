@@ -1,0 +1,13 @@
+library(dndscv)
+
+regime <- "las"
+
+mut_file <- paste("dNdS/mut_tables/", regime, "_snv_only.csv", sep="")
+outfile_global <- paste("dNdS/dndscv_results/", regime, "_global.csv", sep="")
+outfile_selcv <- paste("dNdS/dndscv_results/", regime, "_selcv.csv", sep="")
+
+mut_table <- read.csv(mut_file, header = FALSE)
+dnds_out <- dndscv(mut_table, refdb = "RefCDS_mouse_GRCm38.p2.rda")
+write.table(dnds_out$globaldnds, outfile_global)
+write.table(dnds_out$sel_cv[dnds_out$sel_cv$qmis_cv < 0.05,], outfile_selcv)
+print(dnds_out$nbreg$theta)

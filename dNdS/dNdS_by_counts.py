@@ -1,27 +1,33 @@
 import trisicell as tsc
 import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
-import seaborn as sns
+import csv
+# from matplotlib import pyplot as plt
+# import seaborn as sns
 
 # Regime in question
-regime = "agg"
-by_gene = False # True to give by-gene results, false to give summary results
+regime = "all"
+by_gene = False # True to give by-gene results, false to give genome-wide results
 
 # Data paths
 base_path = "results/tpm_allrep2/orig/gene_lists/adpt_{}/".format(regime)
 adpt_path = base_path + "all_results.csv"
-save_path = "{}_{}.csv".format("mutation_info", regime)
+save_file = "dNdS/dnds_by_counts_results/{}.csv".format(regime)
+output_arr = []
 
 # Sublines in each regime
-if regime == "agg":
+if regime == "har":
     sublines =  ["C18", "C15", "C11", "C16"]
-elif regime == "clade":
-    sublines = ["C13", "C18", "C15", "C11", "C16", "C8", "C20", "C7"]
-elif regime == "1_4_22":
+# elif regime == "clade":
+#     sublines = ["C13", "C18", "C15", "C11", "C16", "C8", "C20", "C7"]
+elif regime == "has":
     sublines = ["C1", "C4", "C22"]
-elif regime == "3_10_14":
+elif regime == "las":
     sublines = ["C3", "C10", "C14"]
+elif regime == "all":
+    sublines = ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11",
+                "C12", "C13", "C14", "C15", "C16", "C17", "C18", "C19", "C20",
+                "C21", "C22", "C23", "C24"]
 else: 
     print("Invalid regime.")
     exit()
@@ -47,19 +53,19 @@ mut_kinds["ensemble_id"] = mut_kinds.index.str.split(".").str[0]
 syn = mut_kinds[mut_kinds["kind"] == "synonymous SNV"]
 nonsyn = mut_kinds[mut_kinds["kind"] == "nonsynonymous SNV"]
 
-
 # Group by ensemble id
 syn_by_gene = syn.groupby("ensemble_id").sum()
 nonsyn_by_gene = nonsyn.groupby("ensemble_id").sum()
-print("Total # of synonymous genes", len(syn_by_gene))
-print("Total # of nonsynonymous genes", len(nonsyn_by_gene))
+print("Total # of synonymous genes:", len(syn_by_gene))
+print("Total # of nonsynonymous genes:", len(nonsyn_by_gene))
+output_arr += [["Total # of synonymous genes", len(syn_by_gene)]]
+output_arr += [["Total # of nonsynonymous genes", len(nonsyn_by_gene)]]
 print("----------")
 
 # Helpful variables
 bkg_sublines = np.setdiff1d(syn_by_gene.columns, sublines)
 n_sublines = len(sublines)
 n_bkg = len(bkg_sublines)
-
 
 # By gene calculations dN/dS
 if by_gene:
@@ -111,26 +117,46 @@ else: # Sums over all genes and all sublines in selected or background
     # Sum background
     sum_syn_bkg = syn_by_gene[syn_by_gene.columns[syn_by_gene.columns.isin(bkg_sublines)]].sum().sum()
     sum_nonsyn_bkg = nonsyn_by_gene[nonsyn_by_gene.columns[nonsyn_by_gene.columns.isin(bkg_sublines)]].sum().sum()
-    
+    output_arr += [["Sum of all synonymous mutations across all genes and selected sublines", sum_syn_select]]
+    output_arr += [["Sum of all synonymous mutations across all genes and background sublines", sum_syn_bkg]]
+    output_arr += [["Sum of all nonsynonymous mutations across all genes and selected sublines", sum_nonsyn_select]]
+    output_arr += [["Sum of all nonsynonymous mutations across all genes and background sublines", sum_nonsyn_bkg]]
     print("Sum of all synonymous mutations across all genes and selected sublines:", sum_syn_select)
-    print("Sum of all synonymous mutations across all genes and background sublines", sum_syn_bkg)
+    print("Sum of all synonymous mutations across all genes and background sublines:", sum_syn_bkg)
     print("Sum of all nonsynonymous mutations across all genes and selected sublines:", sum_nonsyn_select)
-    print("Sum of all nonsynonymous mutations across all genes and background sublines", sum_nonsyn_bkg)
+    print("Sum of all nonsynonymous mutations across all genes and background sublines:", sum_nonsyn_bkg)
     
-    print("Syn / nonsyn for select sublines: ", round(sum_syn_select / sum_syn_bkg, 3))
-    print("Syn / nonsyn for background sublines: ", round(sum_nonsyn_select / sum_nonsyn_bkg, 3))
+    print("Nonsyn / syn for select sublines:", round(sum_nonsyn_select / sum_syn_select, 3))
+    output_arr += [["Nonsyn / syn for select sublines", round(sum_nonsyn_select / sum_syn_select, 3)]]
+    if n_bkg != 0:
+        print("Nonsyn / syn for background sublines:", round(sum_nonsyn_bkg / sum_syn_bkg, 3))
+        output_arr += [["Nonsyn / syn for background sublines", round(sum_nonsyn_bkg / sum_syn_bkg, 3)]]
 
     print("----------")
 
-    norm_sum_syn_select = sum_syn_select / n_sublines
-    norm_sum_nonsyn_select = sum_nonsyn_select / n_sublines
-    norm_sum_syn_bkg = sum_syn_bkg / n_bkg
-    norm_sum_nonsyn_bkg = sum_nonsyn_bkg / n_bkg
+    # Normalize by expected value of synonymous and nonsynonymous mutations
     
+    norm_sum_syn_select = sum_syn_select * 3
+    norm_sum_nonsyn_select = sum_nonsyn_select * 3 / 2
     print("Normalized sum of all synonymous mutations across all genes and selected sublines:", round(norm_sum_syn_select, 3))
-    print("Normalized sum of all synonymous mutations across all genes and background sublines", round(norm_sum_syn_bkg, 3))
     print("Normalized sum of all nonsynonymous mutations across all genes and selected sublines:", round(norm_sum_nonsyn_select, 3))
-    print("Normalized sum of all nonsynonymous mutations across all genes and background sublines", round(norm_sum_nonsyn_bkg, 3))
-    
-    print("Normalized syn / Normalized nonsyn for select sublines: ", round(norm_sum_syn_select / norm_sum_syn_bkg, 3))
-    print("Normalized syn / Normalized nonsyn for background sublines: ", round(norm_sum_nonsyn_select / norm_sum_nonsyn_bkg, 3))
+    output_arr += [["Normalized sum of all synonymous mutations across all genes and selected sublines", round(norm_sum_syn_select, 3)]]
+    output_arr += [["Normalized sum of all nonsynonymous mutations across all genes and selected sublines", round(norm_sum_nonsyn_select, 3)]]
+
+    if n_bkg != 0:
+        norm_sum_syn_bkg = sum_syn_bkg * 3
+        norm_sum_nonsyn_bkg = sum_nonsyn_bkg * 3 / 2
+        print("Normalized sum of all synonymous mutations across all genes and background sublines:", round(norm_sum_syn_bkg, 3))
+        print("Normalized sum of all nonsynonymous mutations across all genes and background sublines:", round(norm_sum_nonsyn_bkg, 3))
+        output_arr += [["Normalized sum of all synonymous mutations across all genes and background sublines", round(norm_sum_syn_bkg, 3)]]
+        output_arr += [["Normalized sum of all nonsynonymous mutations across all genes and background sublines", round(norm_sum_nonsyn_bkg, 3)]]
+
+    print("Normalized nonsyn / Normalized syn for select sublines:", round(norm_sum_nonsyn_select / norm_sum_syn_select, 3))
+    output_arr += [["Normalized nonsyn / Normalized syn for select sublines", round(norm_sum_nonsyn_select / norm_sum_syn_select, 3)]]
+    if n_bkg != 0:
+        print("Normalized nonsyn / Normalized syn for background sublines:", round(norm_sum_nonsyn_bkg / norm_sum_syn_bkg, 3))    
+        output_arr += [["Normalized nonsyn / Normalized syn for background sublines", round(norm_sum_nonsyn_bkg / norm_sum_syn_bkg, 3)]]
+
+    with open(save_file, "w") as f:
+        writer = csv.writer(f)
+        writer.writerows(output_arr)

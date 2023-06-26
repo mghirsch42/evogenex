@@ -1,0 +1,14 @@
+Total # of synonymous genes,1035
+Total # of nonsynonymous genes,2965
+Sum of all synonymous mutations across all genes and selected sublines,289
+Sum of all synonymous mutations across all genes and background sublines,1237
+Sum of all nonsynonymous mutations across all genes and selected sublines,762
+Sum of all nonsynonymous mutations across all genes and background sublines,4204
+Nonsyn / syn for select sublines,2.637
+Nonsyn / syn for background sublines,3.399
+Normalized sum of all synonymous mutations across all genes and selected sublines,867
+Normalized sum of all nonsynonymous mutations across all genes and selected sublines,1143.0
+Normalized sum of all synonymous mutations across all genes and background sublines,3711
+Normalized sum of all nonsynonymous mutations across all genes and background sublines,6306.0
+Normalized nonsyn / Normalized syn for select sublines,1.318
+Normalized nonsyn / Normalized syn for background sublines,1.699
