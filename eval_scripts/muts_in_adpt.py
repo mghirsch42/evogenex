@@ -2,7 +2,7 @@ import trisicell as tsc
 import pandas as pd
 import numpy as np
 
-# Just count # of adaptive genes with mutations
+# Count the number of genes that are mutated and adaptive
 
 # regime = "agg"
 regime = "1_4_22"

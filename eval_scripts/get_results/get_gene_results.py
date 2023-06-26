@@ -35,6 +35,7 @@ def main(result_path, save_path, model, inverse):
         temp_df = pd.read_csv(result_path+f)
         results_df = results_df.append(temp_df, ignore_index=True)
     # The results will have the ensemble id and gene name as a single column - split into two
+    # The simulation will not have this, just set each key to the gene name
     if results_df["gene"].astype(str).str.contains("_").all():
         results_df[["ensemble_id", "gene_name"]] = results_df["gene"].str.split("_", expand=True)
     else:
@@ -59,18 +60,19 @@ def main(result_path, save_path, model, inverse):
         df2["theta_diff"] = df2["ou2_theta"] - df2["ou2_theta_base"]
 
         results_df = df2
+    
+    # Get only the adaptive results
     pos_res = results_df[results_df[model_col] == model_goal]
     pos_res = pos_res.drop(model_col, axis=1)
 
     print(str(len(pos_res)) + " positive results out of " + str(len(results_df)))
 
     if save_path:
+        # Save all results and the positive results
         pos_res.to_csv(save_path + "gene_info.csv", index=False)
         results_df.to_csv(save_path + "all_results.csv", index=False)
-        
     else:
         print(pos_res)
-        print(pos_res.columns)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

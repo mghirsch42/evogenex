@@ -4,6 +4,8 @@ import numpy as np
 import math
 import argparse
 
+# Save the Trisicell data into usable format.
+# Keep only genes that have non-zero values for all species.
 
 def main(start, end, inc, dtype, save_path, save_prefix):
 
@@ -98,17 +100,26 @@ def main(start, end, inc, dtype, save_path, save_prefix):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--start", type=int, action="store", default=0)
-    parser.add_argument("--end", type=int, action="store", default=55401)
-    parser.add_argument("--inc", type=int, action="store", default=1000)
-    parser.add_argument("--dtype", type=str, action="store", default="tpm")
-    parser.add_argument("--save_path", type=str, action="store", default="")
-    parser.add_argument("--save_prefix", type=str, action="store", default="")
+    parser.add_argument("--start", type=int, action="store", default=0,
+                        help="The index of the gene to start analysis with. Default = 0.")
+    parser.add_argument("--end", type=int, action="store", default=55401,
+                        help="The last gene to include in analysis. Default = 55401 (total number of genes in dataset).")
+    parser.add_argument("--inc", type=int, action="store", default=1000,
+                        help="The increment of genes to analyze and save separately. " +
+                        "If genes are excluded because of non-zero values, the save files will " + 
+                        "have fewer than inc genes. Default = 1000.")
+    parser.add_argument("--dtype", type=str, action="store", default="tpm",
+                        help="The normalization type of the data. Either tpm or fpkm. Default = tpm.")
+    parser.add_argument("--save_path", type=str, action="store", default="",
+                        help="The directory into which the data will be saved. Default = ./")
+    parser.add_argument("--save_prefix", type=str, action="store", default="",
+                        help="The prefix for the saved data files (for instance if saving multiple " +
+                        "types of data to the save directory). Default = ''.")
     args = parser.parse_args()
 
-    # if not args.dtype in ["tpm", "fpkm"]:
-    #     print("dtype must be either 'tpm' or 'fpkm'.")
-    #     exit()
+    if not args.dtype in ["tpm", "fpkm"]:
+        print("dtype must be either 'tpm' or 'fpkm'.")
+        exit()
     if args.save_prefix != "" and args.save_prefix[-1] != "_":
         args.save_prefix += "_"
 

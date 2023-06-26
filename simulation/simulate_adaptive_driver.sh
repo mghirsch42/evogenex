@@ -21,7 +21,7 @@ for theta_ratio in "${theta_ratios[@]}"; do
             for alpha in "${alphas[@]}"; do
                 outfile="${outpath}tr_${theta_ratio}_sq_${sigmasq}_r_${r}_a_${alpha}.csv"
                 echo $theta_ratio " " $sigmasq " " $r " " $alpha
-                Rscript simulation/simulate_data.R \
+                Rscript simulation/simulate_adaptive.R \
                     $tree_file \
                     $outfile \
                     $regime_file \

@@ -18,7 +18,7 @@ TREE_FILE=$1
 REGIME_FILE=$2
 OUTPUT_PATH=$3
 
-./simulation/simulate_data_driver.sh \
+./simulation/simulate_adaptive_driver.sh \
     $TREE_FILE \
     $REGIME_FILE \
     $OUTPUT_PATH \
