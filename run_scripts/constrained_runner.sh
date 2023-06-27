@@ -54,10 +54,10 @@ for data_file in $DATA_PATH*; do
       ./run_scripts/constrained_driver.sbatch $TREE_FILE $REGIME_FILE $data_file $output_file  
   else
     echo "Using CPU"
-    ./run_scripts/constrained_pipeline.sh \
-      -t $TREE_FILE \
-      -r $REGIME_FILE \
-      -d $data_file \
-      -o $output_file
+    Rscript run_scripts/constrained_evogenex.R \
+      $TREE_FILE \
+      $REGIME_FILE \
+      $data_file \
+      $output_file
   fi
 done

@@ -60,11 +60,6 @@ for data_file in $DATA_PATH*; do
       ./run_scripts/adaptive_driver.sbatch $TREE_FILE $SINGLE_REGIME_FILE $TWO_REGIME_FILE $data_file $output_file  
   else
     echo "Using CPU"
-    ./run_scripts/adaptive_pipeline.sh \
-      -t $TREE_FILE \
-      -r $SINGLE_REGIME_FILE \
-      -u $TWO_REGIME_FILE \
-      -d $data_file \
-      -o $output_file
+    Rscript run_scripts/adaptive_evogenex.R $TREE_FILE $SINGLE_REGIME_FILE $TWO_REGIME_FILE $data_file $output_file
   fi
 done

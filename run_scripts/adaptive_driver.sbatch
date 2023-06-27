@@ -20,9 +20,10 @@ TWO_REGIME_FILE=$3
 DATA_PATH=$4
 OUTPUT_FILE=$5
 
-./run_scripts/adaptive_pipeline.sh \
-  -t $TREE_FILE \
-  -r $SINGLE_REGIME_FILE \
-  -u $TWO_REGIME_FILE \
-  -d $DATA_PATH \
-  -o $OUTPUT_FILE
+Rscript run_scripts/adaptive_evogenex.R \
+  $TREE_FILE \
+  $SINGLE_REGIME_FILE \
+  $TWO_REGIME_FILE \
+  $DATA_PATH \
+  $OUTPUT_FILE
+

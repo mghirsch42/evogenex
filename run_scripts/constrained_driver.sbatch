@@ -18,8 +18,8 @@ REGIME_FILE=$2
 DATA_PATH=$3
 OUTPUT_FILE=$4
 
-./run_scripts/constrained_pipeline.sh \
-  -t $TREE_FILE \
-  -r $REGIME_FILE \
-  -d $DATA_PATH \
-  -o $OUTPUT_FILE
+Rscript run_scripts/constrained_evogenex.R \
+  $TREE_FILE \
+  $REGIME_FILE \
+  $DATA_PATH \
+  $OUTPUT_FILE
