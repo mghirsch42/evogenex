@@ -12,6 +12,14 @@
 #SBATCH --output=output/%x_%j.out
 #SBATCH --error=output/%x_%j.err
 
+##########
+### Submit a job to run simulate_neutral_driver.sh
+### Params:
+### Arg 1: Path to tree file in Newick format
+### Arg 2: Path to save data files
+##########
+
+
 module load R/4.1.2/3.14
 
 TREE_FILE=$1

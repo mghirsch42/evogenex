@@ -5,7 +5,10 @@ library(phytools)
 library(tidyr)
 library(dplyr)
 
-# Simulate data with adaptive evolution with the same alpha and sigma squared
+##########
+### Simulate multiple data replicates under neutral evolution 
+### and with the same parameter values
+##########
 
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) < 8) {

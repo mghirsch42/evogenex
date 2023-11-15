@@ -1,11 +1,23 @@
 #!/bin/bash
 
+##########
+### Simulate data with the cross product of the parameters listed below.
+### Simulate constrained data with theta_ratios=( 0 )
+### Simulate adaptive data with non-zero theta_ratios
+### Calls simulate_adaptive.R with each parameter combination
+### Params:
+### Arg 1: Tree file in Newick format
+### Arg 2: Path to regime file (either single-regime for constrained or two-regime for adaptive)
+### Arg 3: Path to save the output files
+##########
+
 tree_file=$1
 regime_file=$2
 outpath=$3
 
 theta_root=150
-theta_ratios=( 1.1 1.08 1.06 1.04 1.02 )
+#theta_ratios=( 0 ) # constrained evolution
+theta_ratios=( 1.1 1.08 1.06 1.04 1.02 ) # adaptive evolution
 sigmasqs=( .15 1.5 15 )
 rs=( 100 150 200 )
 alphas=( .125 1 8 )

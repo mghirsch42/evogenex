@@ -1,17 +1,18 @@
 import pandas as pd
 import os
 from scipy import stats
-#from matplotlib import pyplot as plt
-#import seaborn as sns
 from statsmodels.stats.multitest import multipletests
 import numpy as np
+
+##########
+### Run differential expression over the simulated data
+### Update file paths to reflect your data and save locations
+##########
 
 base_path = "data/simulated/neut_sim/"
 regime ="agg_resolved"
 regime_file = "regime_files/resolved/{}.csv".format(regime)
 save_path = "results/simulated/differential_expression/neut_sim/"
-# save_path = None
-files_together = False # True if you want to read all files in folder and perform differential expression together, false to do de on each file individually
 
 def run_de(df, r1_taxa, r2_taxa, save_file):
     df["aggressive"] = df["species"].isin(r2_taxa)
@@ -22,7 +23,6 @@ def run_de(df, r1_taxa, r2_taxa, save_file):
     results = []
 
     for gene in df["gene"].unique():
-        # ensemble_id, gene_name = gene.split("_")
         ensemble_id = gene
         gene_name = gene
         curr_data = df[df["gene"] == gene]
@@ -46,6 +46,7 @@ def run_de(df, r1_taxa, r2_taxa, save_file):
     if save_path:
         results_df.to_csv(save_file, index=False)
 
+
 regime_df = pd.read_csv(regime_file)
 
 r1_taxa = regime_df[(regime_df["regime"] == "nonaggressive") &  (regime_df["node2"].isna())]["node"].to_list()
@@ -53,15 +54,9 @@ r2_taxa = regime_df[(regime_df["regime"] == "aggressive") &  (regime_df["node2"]
 
 df = pd.DataFrame()
 
-if files_together:
-    for f in os.listdir(base_path):
-        temp = pd.read_csv(base_path + f)
-        df = df.append(temp, ignore_index = True)
-    run_de(df, r1_taxa, r2_taxa, save_path)
-else:
-    for f in os.listdir(base_path):
-        df = pd.read_csv(base_path + f)
-        if save_path:
-            run_de(df, r1_taxa, r2_taxa, save_path + f[:-4] +  ".csv")
-        else:
-            run_de(df, r1_taxa, r2_taxa, save_path)
+for f in os.listdir(base_path):
+    df = pd.read_csv(base_path + f)
+    if save_path:
+        run_de(df, r1_taxa, r2_taxa, save_path + f[:-4] +  ".csv")
+    else:
+        run_de(df, r1_taxa, r2_taxa, save_path)

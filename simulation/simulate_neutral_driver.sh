@@ -1,5 +1,13 @@
 #!/bin/bash
 
+##########
+### Simulate neutral data with the cross product of the parameters listed below.
+### Calls simulate_neutral.R with each parameter combination
+### Params:
+### Arg 1: Tree file in Newick format
+### Arg 2: Path to save the output files
+##########
+
 tree_file=$1
 outpath=$2
 
