@@ -33,7 +33,8 @@ def main(result_path, save_path, model, inverse):
     # Any columns we didn't define above will be added
     for f in [f for f in os.listdir(result_path) if ".csv" in f]:
         temp_df = pd.read_csv(result_path+f)
-        results_df = results_df.append(temp_df, ignore_index=True)
+        results_df = pd.concat([results_df, temp_df], ignore_index=True)
+        # results_df = results_df.append(temp_df, ignore_index=True)
     # The results will have the ensemble id and gene name as a single column - split into two
     # The simulation will not have this, just set each key to the gene name
     if results_df["gene"].astype(str).str.contains("_").all():
@@ -53,7 +54,8 @@ def main(result_path, save_path, model, inverse):
         df2 = pd.DataFrame(columns=new_cols)
         for g in results_df["gene_name"].unique():
             sub = results_df[results_df["gene_name"] == g]  # Two entries - adaptive, then base
-            df2 = df2.append(sub.iloc[0]) # Add adaptive entry
+            df2.loc[len(df2)] = sub.iloc[0]
+            # df2 = df2.append(sub.iloc[0]) # Add adaptive entry
             df2.loc[df2["gene_name"] == g, "ou2_theta_base"] = sub["ou2_theta"].iloc[1] # Add base value
     
         # Calculate the difference between the theta values

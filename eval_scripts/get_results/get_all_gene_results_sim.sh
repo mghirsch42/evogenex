@@ -1,5 +1,10 @@
 #/bin/bash
 
+##########
+### Loop over all result files for a specific simulation and run
+### get_gene_results.py and add_stats_cols.R
+##########
+
 result_path="results/simulation/sim_clade_t10_r8/"
 
 for f in $result_path*/; do

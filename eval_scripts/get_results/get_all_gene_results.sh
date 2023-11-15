@@ -1,15 +1,14 @@
 #/bin/bash
 
-result_path="results/tpm_allrep2/"
+##########
+### Loop over all regime results and run get_gene_results.py and add_stats_cols.R
+##########
 
-# for tree in "orig" "lp_scaled"; do
-for tree in "orig"; do
-    # for adpt in "agg2" "agg3" "clade2" "1_4_22" "3_10_14"; do
-    for adpt in "12_17_23" "5" "6_etc"; do
-        echo "Tree: ${tree}; Adpt: ${adpt}"
-        python3 eval_scripts/get_results/get_gene_results.py ${result_path}${tree}/adpt_${adpt}/ a -s ${result_path}${tree}/gene_lists/adpt_${adpt}/
-        Rscript eval_scripts/get_results/add_stats_cols.R ${result_path}${tree}/gene_lists/adpt_${adpt}/gene_info.csv
-        Rscript eval_scripts/get_results/add_stats_cols.R ${result_path}${tree}/gene_lists/adpt_${adpt}/all_results.csv
-        Rscript eval_scripts/get_results/get_top_genes.R ${result_path}${tree}/gene_lists/adpt_${adpt}/gene_info.csv ${result_path}${tree}/gene_lists/adpt_${adpt}/top_genes.csv
-    done
+result_path="results/tpm/"
+
+for adpt in "har" "has" "las"; do
+    echo "Adpt: ${adpt}"
+    python3 eval_scripts/get_results/get_gene_results.py ${result_path}${tree}/adpt_${adpt}/ a -s ${result_path}${tree}/gene_lists/adpt_${adpt}/
+    Rscript eval_scripts/get_results/add_stats_cols.R ${result_path}${tree}/gene_lists/adpt_${adpt}/gene_info.csv
+    Rscript eval_scripts/get_results/add_stats_cols.R ${result_path}${tree}/gene_lists/adpt_${adpt}/all_results.csv
 done

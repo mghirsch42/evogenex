@@ -2,9 +2,11 @@
 library(tidyverse)
 library(dplyr)
 
-# This takes a file from get_gene_results.py and adds columns for qvalue, relative difference of
-# theta values, and the log fold change of theta values and save it back to the same file.
-# We use R for this to be consistent with the previous EvoGeneX study
+##########
+### This takes a file from get_gene_results.py and adds columns for qvalue, relative difference of
+### theta values, and the log fold change of theta values and save it back to the same file.
+### We use R for this to be consistent with the previous EvoGeneX study
+##########
 
 # Parse arguments
 args <- commandArgs(trailingOnly=TRUE)

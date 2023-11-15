@@ -1,13 +1,15 @@
 import trisicell as tsc
 import pandas as pd
 
+##########
+### Create mutation tables required for dndscv
+##########
+
 regime = "all"
 
 # Sublines in each regime
 if regime == "har":
     sublines =  ["C18", "C15", "C11", "C16"]
-# elif regime == "clade":
-#     sublines = ["C13", "C18", "C15", "C11", "C16", "C8", "C20", "C7"]
 elif regime == "has":
     sublines = ["C1", "C4", "C22"]
 elif regime == "las":
@@ -42,8 +44,6 @@ tsc_subset = tsc_subset[~(tsc_subset[sublines] == 0).all(axis=1)]
 # Take the SNV data for the ids we have mutation data for
 df = df[df["ensemble_id"].isin(tsc_subset["ensemble_id"])]
 
-# print(len(tsc_subset))
-# print(len(df))
 
 # Take only the columns of interest, reformat, and save
 df = df[["chrom", "position", "reference", "alteration"]]

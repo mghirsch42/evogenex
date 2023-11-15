@@ -14,7 +14,7 @@ def main(start, end, inc, dtype, save_path, save_prefix):
 
     # Load the data
     sc_data = tsc.datasets.sublines_scrnaseq()
-    exp_data = sc_data["mutation"]
+    exp_data = sc_data["expression"]
 
     while start < end:
 
@@ -74,12 +74,13 @@ def main(start, end, inc, dtype, save_path, save_prefix):
                         expr_val = math.log2(1+rep)
 
                     # Add this value to the dataframe
-                    exp_df = exp_df.append({
-                        "gene": gene_name,
-                        "species": subline,
-                        "replicate": rep_name,
-                        "exprval": expr_val
-                    }, ignore_index=True)
+                    curr_df = pd.DataFrame.from_dict({
+                        "gene": [gene_name],
+                        "species": [subline],
+                        "replicate": [rep_name],
+                        "exprval": [expr_val]
+                    })
+                    exp_df = pd.concat([exp_df, curr_df], ignore_index = True)
 
             # If the gene has all NA values, remove it
             if (exp_df[exp_df["gene"] == gene_name]["exprval"] == "NA").all():
