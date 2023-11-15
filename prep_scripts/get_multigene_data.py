@@ -4,8 +4,11 @@ import numpy as np
 import math
 import argparse
 
-# Save the Trisicell data into usable format.
-# Keep only genes that have non-zero values for all species.
+##########
+## Save the Trisicell data into usable format.
+## Keep only genes that have non-zero values for all species.
+## Log normalize data.
+##########
 
 def main(start, end, inc, dtype, save_path, save_prefix):
 

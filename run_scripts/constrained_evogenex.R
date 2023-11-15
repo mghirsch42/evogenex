@@ -5,6 +5,16 @@ library(EvoGeneX)
 library(knitr)
 library(ape)
 
+##########
+### Run EvoGeneX to test for constrained evolution for all genes in given input file.
+### Params:
+### Arg 1: File of tree in Newick format with branch lengths
+### Arg 2: File of the single regime
+### Arg 3: Path to the data file
+### Arg 4: Path to save the output
+### See EvoGeneX documentation for requirements for these files
+##########
+
 # Parse arguments
 args = commandArgs(trailingOnly=TRUE)
 newick_file <- args[1]

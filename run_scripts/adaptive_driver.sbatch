@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #SBATCH --qos=throughput
-###SBATCH --exclude=heron[00-11]
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
@@ -11,6 +10,17 @@
 #SBATCH --time=05:00:00
 #SBATCH --output=output/%x_%j.out
 #SBATCH --error=output/%x_%j.err
+
+###########
+### Run EvoGeneX to test for for adaptivity on all genes within the input file.
+### Params: 
+### Arg 1: File of tree in Newick format with branch lengths
+### Arg 2: File of the single regime
+### Arg 3: File for the two-regime
+### Arg 4: Path to the data file
+### Arg 5: Path to save the output
+### See EvoGeneX documentation for requirements for these files
+##########
 
 module load R/4.1.2/3.14
 

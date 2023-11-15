@@ -1,5 +1,19 @@
 #!/bin/bash
 
+########
+### Loop over all files in given directory and run EvoGeneX to test for 
+### constrained evolution over all genes within each file.
+### Params: 
+### -t File of tree in Newick format with branch lengths
+### -r File of the single regime
+### -d Path to the data files
+### -o Path to save the output
+### -p Prefix for the output files (optional)
+### -s Flag to use SLURM
+### See EvoGeneX documentation for requirements for the files.
+### Saves the output for each data file separately under files with the same name.
+##########
+
 USE_SLURM="false"
 OUTPUT_PREFIX=""
 
