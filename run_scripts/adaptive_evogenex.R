@@ -12,7 +12,7 @@ library(ape)
 ### Arg 2: File of the single regime
 ### Arg 3: File for the two-regime
 ### Arg 4: Path to the data file
-### Arg 5: Path to save the output
+### Arg 5: Path to save the output file
 ### See EvoGeneX documentation for requirements for these files
 ##########
 

@@ -2,11 +2,14 @@ import trisicell as tsc
 import pandas as pd
 import numpy as np
 
-# Count the number of genes that are mutated and adaptive
+##########
+### Count the number of genes that are mutated and adaptive
+### (Supplement)
+##########
 
-# regime = "agg"
-regime = "1_4_22"
-# regime = "3_10_14"
+# regime = "har"
+regime = "has"
+# regime = "las"
 
 # How to count mutations in each group
 # any - count genes where any sublines in that group are mutated
@@ -23,13 +26,11 @@ adpt_path = base_path + "all_results.csv"
 save_path = "{}_{}.csv".format("mutation_info", regime)
 
 # Sublines in each regime
-if regime == "agg":
+if regime == "har":
     sublines =  ["C18", "C15", "C11", "C16"]
-elif regime == "clade":
-    sublines = ["C13", "C18", "C15", "C11", "C16", "C8", "C20", "C7"]
-elif regime == "1_4_22":
+elif regime == "has":
     sublines = ["C1", "C4", "C22"]
-elif regime == "3_10_14":
+elif regime == "las":
     sublines = ["C3", "C10", "C14"]
 else: 
     print("Invalid regime.")

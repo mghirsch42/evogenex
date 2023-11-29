@@ -3,6 +3,10 @@ library(dplyr)
 library(stringr)
 library(clusterProfiler)
 
+##########
+### Helper functions to run over-representation enrichment analysis.
+##########
+
 kegg_enrich <- function(query_genes, ref_genes, save_file) {
     query_entrez <- bitr(query_genes$gene_name, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
     ref_entrez <- bitr(ref_genes$gene_name, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")
@@ -27,7 +31,6 @@ kegg_enrich <- function(query_genes, ref_genes, save_file) {
 }
 
 go_enrich <- function(query_genes, ref_genes, save_file) {
-    # print(ref_genes)
     go_all <- enrichGO(
                     gene = query_genes$gene_name,
                     universe = ref_genes$gene_name,
@@ -39,6 +42,5 @@ go_enrich <- function(query_genes, ref_genes, save_file) {
                     qvalueCutoff = .05,
                     readable = TRUE
                 )
-    print(go_all)
     write.csv(go_all, save_file, row.names = FALSE)
 }

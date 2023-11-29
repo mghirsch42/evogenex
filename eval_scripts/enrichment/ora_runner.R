@@ -1,15 +1,21 @@
 library(tidyr)
 library(dplyr)
 library(clusterProfiler)
-source("eval_scripts/enrichment/ora/ora_functions.R")
+source("eval_scripts/enrichment/ora_functions.R")
 
-regime <- "3_10_14"
+##########
+### Script to run over-representation enrichment analysis using clusterProfiler
+### on the results from EvoGeneX.
+### Options to run with KEGG or GO, although only KEGG was used in the results of this study.
+##########
+
+regime <- "har"
 method <- "kegg" # go or kegg
-group <- "negative" # positive, negative, or anything for all
-save_file <- paste("results/tpm_allrep2/orig/gene_lists/adpt_",
-                    regime, "/enrichment/entrezid/", regime, "_", group,
+group <- "negative" # positive or negative
+save_file <- paste("results/tpm/gene_lists/adpt_",
+                    regime, "/enrichment/", regime, "_", group,
                     ".csv", sep="")
-results_file <- paste("results/tpm_allrep2/orig/gene_lists/adpt_",
+results_file <- paste("results/tpm/gene_lists/adpt_",
                        regime, "/all_results.csv", sep="")
 results <- read.csv(results_file)
 

@@ -1,6 +1,18 @@
+# Data
 
+## Regime files
 
-# Reporoducibility
+The regime files are located in the regime_files/ folder. These files define the HA-R, HA-S, and LA-S regimes for EvoGeneX.
+
+## Tree files
+
+The tree file used is in the tree_files/ folder. The file is in Newick format.
+
+## Simulation data
+
+The data used for our simulation files are available in the Supplementary Files. See below on how to generate new data under the same parameter settings.
+
+# Reproducibility
 
 ## Running EvoGeneX on 24-subline data
 
@@ -22,6 +34,14 @@ Evaluation scripts are in the eval_scripts/ folder. These files organize the res
 
 The scripts in kmeans/ provides code to cluster the results and make the heatmap in Figure 2. kmeans.py runs kmeans clustering on the results (with a defined random seed for reproducibility). heatmap.py plots the clusters as a heatmap.
 
+## dN/dS evaluation
+
+Scripts to run dN/dS methods are in the dNdS/ folder. To run dN/dS using the counting method, you can run dNdS_by_counts.py. To run dNdScv, first you will need to download the GRCm38.p2 mouse reference genome (NCBI RefSeq assembly GCF_000001635.22; https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000001635.22/). The script assumes this file is in the highest level folder and named RefCDS_mouse_GRCm38.p2.rda, however you can modify the code to point to the file in your directories. Second, run get_mut_table.py. This will generate a csv file with the mutation information as needed for dNdScv for the chosen regime (saves results in dNdS/mut_tables, assumes that folder exists). Then run dndscv.R.
+
+## Evaluate adaptivity in differentially expressed genes
+
+Scripts to evaluate the genes with adaptive expression within the differentially expressed genes between post-treatment responders and non-responders are in the eval_scripts/treatment_eval/ folder. The deseq2_eval.py script will calculate the number of genes with adaptive expression that are also differentially expressed and save the information about the adaptivity and differential expression to a file. 
+
 ## Simulation 
 
 ### Simulate data
@@ -41,41 +61,10 @@ You can run differential expression on the simulated data using the simulation/d
 Scripts to organize and evaluate the simulation results are in the eval_scripts/simulation/ folder. get_sim_results.sbatch will run eval_scripts/get_results/get_gene_results.py and eval_scripts/get_results/add_stats_cols.R and generate results files. Then, get_csv.sh will collate the results for all the simulations into a single file. The get_de_results.py will collate the results of differential expression on all simulations into a single file.
 
 
+## Generate figures
 
----
+Scripts used to generate figures are in the figures/ folder. See readme in that folder for further information and instructions.
 
-# Description of folders
-
-## prep_data/
-
-The get_multigene_data.py file will download gene expression data from the Trisicell database and format it for our purposes. It will save the log of the expression data for each gene into files, including only genes with non-zero values for all sublines. It has options to download either the TPM or FPKM normalized data and to split the data into multiple files.
-
-## run_scripts/
-
-This folder includes the scripts used to run EvoGeneX on the gene expression data. It is set up to work either on CPU or create multiple jobs on a cluster using SLURM. If using SlURM, it will create a separate job for each data file in the data directory.
-
-Run the scripts over a directory of data files by calling the "_runner.sh" files. Including the -s flag will run separate jobs a cluster using the "_driver.sbatch" scripts. The "_evogenex.R" files run EvoGeneX on each file.
-
-If you would like to run EvoGeneX on a single file rather than over multiple files, you can call the "_evogenex.R" scripts directly, or use the "_driver.sbatch" script to run it on a cluster.
-
-## eval_scripts/
-
-muts_in_adpt.py will calculate the number of mutated genes that are adaptive.
-treatment_ttest.py will perform a t-test between responder and non-responder tumors from the treatment data.
-
-### get_results/
-
-get_gene_results.py will loop through all result files and combine them into a single file. It will also add clear labelling as to whether the gene has adaptive/constrained expression or not.
-
-add_stats_cols.R takes results from get_gene_results.py and adds q-values and log fold values.
-
-get_all_gene_results.sh will loop through the experimental situations and call get_gene_results.py and add_stats_cols.R as needed.
-
-
-### enrichment/
-
-These scripts will run over-representation enrichment analysis with KEGG or GO on the results from EvoGeneX using the R package clusterProfiler (https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html). The functions to run the enrichment are in ora_functions.R. Scripts to run the functions on different data sets are in exp_ora.R and val_ora.R.
-
-## Notes
+# Notes
 
 In all R files, make sure that the library paths are set correctly. If not using the default install location, set the library path using .libPaths("path_to_library"). If using the default, delete this line.
