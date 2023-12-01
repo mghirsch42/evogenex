@@ -3,17 +3,18 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 df_save_file = "results/mouse_treatment/differential_expression/deseq2_summary.csv"
-plt_save_file = "figures/adpt_in_diffeq/deseq2_adaptive_in_diff_eq_code_output.svg"
+plt_save_file = "figures/figure3d_adaptive_in_diff_eq_code_output.svg"
 
 # DEGs that are evaluated for adaptivity
 deg_adpt = pd.read_csv("results/mouse_treatment/differential_expression/deseq2_adpt_merge.csv")
 deg_adpt["r_nr"] = ["R > NR" if g["log2FoldChange"] > 0 else "R < NR" for i, g in deg_adpt.iterrows()]
-df = pd.DataFrame(columns = ["regime","r_nr","pos_neg_adpt","adpt_de","adpt_de/de"])
 
 r = len(deg_adpt[deg_adpt["log2FoldChange"] > 0])
 nr = len(deg_adpt[deg_adpt["log2FoldChange"] < 0])
 
-for regime in ["agg", "1_4_22", "3_10_14"]:
+df_data = []
+
+for regime in ["har", "has", "las"]:
     curr_deg = deg_adpt[deg_adpt["{} q-value".format(regime)] < 0.05]
     
     r_pos = len(curr_deg[(curr_deg["log2FoldChange"] > 0) & (curr_deg["{} logFC".format(regime)] > 0)])
@@ -21,15 +22,12 @@ for regime in ["agg", "1_4_22", "3_10_14"]:
     nr_pos = len(curr_deg[(curr_deg["log2FoldChange"] < 0) & (curr_deg["{} logFC".format(regime)] > 0)])
     nr_neg = len(curr_deg[(curr_deg["log2FoldChange"] < 0) & (curr_deg["{} logFC".format(regime)] < 0)])
 
-    df = df.append([{"regime": regime, "r_nr": "R > NR", "pos_neg_adpt": "positive", "adpt_de":r_pos, "adpt_de/de":r_pos/r}])
-    df = df.append([{"regime": regime, "r_nr": "R > NR", "pos_neg_adpt": "negative", "adpt_de":r_neg, "adpt_de/de":r_neg/r}])
-    df = df.append([{"regime": regime, "r_nr": "R < NR", "pos_neg_adpt": "positive", "adpt_de":nr_pos, "adpt_de/de":nr_pos/nr}])
-    df = df.append([{"regime": regime, "r_nr": "R < NR", "pos_neg_adpt": "negative", "adpt_de":nr_neg, "adpt_de/de":nr_neg/nr}])
+    df_data += [[regime, "R > NR", "positive", r_pos, r_pos/r]]
+    df_data += [[regime, "R > NR", "negative", r_neg, r_neg/r]]
+    df_data += [[regime, "R < NR", "positive", nr_pos, nr_pos/nr]]
+    df_data += [[regime, "R < NR", "negative", nr_neg, nr_neg/nr]]
 
-
-df["regime"] = df["regime"].replace("agg", "HA-R")
-df["regime"] = df["regime"].replace("1_4_22", "HA-S")
-df["regime"] = df["regime"].replace("3_10_14", "LA-S")
+df = pd.DataFrame(df_data, columns = ["regime","r_nr","pos_neg_adpt","adpt_de","adpt_de/de"])
 
 fig, (ax1, ax2) = plt.subplots(2, 1, sharex=False, sharey=True)
 df["adpt_de/de"] = round(df["adpt_de/de"] * 100, 1)

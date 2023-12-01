@@ -10,12 +10,12 @@ import numpy as np
 ##########
 
 base_path = "data/simulated/neut_sim/"
-regime ="agg_resolved"
-regime_file = "regime_files/resolved/{}.csv".format(regime)
+regime ="har"
+regime_file = "regime_files/{}.csv".format(regime)
 save_path = "results/simulated/differential_expression/neut_sim/"
 
 def run_de(df, r1_taxa, r2_taxa, save_file):
-    df["aggressive"] = df["species"].isin(r2_taxa)
+    df["chosen"] = df["species"].isin(r2_taxa)
 
     r1_data = df[df["species"].isin(r1_taxa)]
     r2_data = df[df["species"].isin(r2_taxa)]
@@ -49,8 +49,8 @@ def run_de(df, r1_taxa, r2_taxa, save_file):
 
 regime_df = pd.read_csv(regime_file)
 
-r1_taxa = regime_df[(regime_df["regime"] == "nonaggressive") &  (regime_df["node2"].isna())]["node"].to_list()
-r2_taxa = regime_df[(regime_df["regime"] == "aggressive") &  (regime_df["node2"].isna())]["node"].to_list()
+r1_taxa = regime_df[(regime_df["regime"] == "background") &  (regime_df["node2"].isna())]["node"].to_list()
+r2_taxa = regime_df[(regime_df["regime"] == "chosen") &  (regime_df["node2"].isna())]["node"].to_list()
 
 df = pd.DataFrame()
 

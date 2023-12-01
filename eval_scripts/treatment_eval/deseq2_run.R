@@ -13,7 +13,7 @@ colnames(count_mat) <- sub("^X", "", colnames(count_mat))
 colnames(count_mat) <- sub("__", "_", colnames(count_mat))
 
 response_data <- subset(response_data, response_data$Response != "4IgG") # Remove controls
-response_data$Response[response_data$Response == "2S"] <- "1R"
+response_data$Response[response_data$Response == "2S"] <- "1R" # Include stable disease in responders
 
 rownames(response_data) <- response_data$SYMBOL
 count_mat <- count_mat[, rownames(response_data)]

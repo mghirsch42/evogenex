@@ -8,7 +8,7 @@ library(tidyr)
 ### Modifications made in Adobe Illustrator.
 ##########
 
-tree_file <- "tree_files/unresolved/sc-bwes-cons-10.tree"
+tree_file <- "tree_files/sc-bwes-cons-resolved-10.tree"
 tree <- read.tree(tree_file)
 
 growth_data <- read.csv("data/mouse_treatment/24_subclone_growth_dynamics.csv")

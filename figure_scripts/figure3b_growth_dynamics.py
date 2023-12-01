@@ -2,31 +2,22 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-data = pd.read_csv("data/mouse_treatment/16-007-14 tumors R vs NR.csv")
+data = pd.read_csv("data/mouse_treatment/post_treatment_growth_dynamics.csv")
 data = data.rename(columns = {"Unnamed: 0": "day"})
 
-# data.index = data["day"]
-# data = data.drop("day", axis=1)
-# data.columns = [x.split(".")[0] for x in data.columns]
 data = data.melt(id_vars = "day", var_name="mouse")
 data["response"] = data["mouse"].str.split(".", expand=True)[0]
-# print(data)
+print(data)
 
 colors = {"anti-CTLA-4 (Non-responder)": "blue", "anti-CTLA-4 (Responder)": "orange", "IgG2b": "gray"}
 
 f, (ax1, ax2) = plt.subplots(2, 1, figsize=(5,7), sharex=True, gridspec_kw={'height_ratios': [1, 3]})
 
 for mouse in data["mouse"].unique():
-    print(mouse)
     curr_data = data[data["mouse"] == mouse]["response"].reset_index(drop=True)
-    # print(curr_data)
     color = colors[curr_data[0]]
-    # print(color)
     sns.lineplot(data = data[data["mouse"] == mouse], x="day", y="value", color=color, ax=ax1)
     sns.lineplot(data = data[data["mouse"] == mouse], x="day", y="value", color=color, ax=ax2)
-    # plt.show()
-    # exit()
-# sns.lineplot(data=data, x="day", y="value", hue="response")
 
 # Split axis
 ax1.set_ylim(400, 1000)  # outliers only

@@ -46,7 +46,7 @@ for theta_ratio in "${theta_ratios[@]}"; do
                     $ngene \
                     $nrep \
                     $rep_drop \
-                    "backgrond" \
+                    "background" \
                     "selected"
             done
         done
