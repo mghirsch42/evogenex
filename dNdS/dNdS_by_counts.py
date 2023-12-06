@@ -15,9 +15,9 @@ import csv
 regime = "har" # either all, har, has, or las
 
 # Data paths
-base_path = "results/tpm_allrep2/orig/gene_lists/adpt_{}/".format(regime)
+base_path = "results/tpm/gene_lists/adpt_{}/".format(regime)
 adpt_path = base_path + "all_results.csv"
-save_file = "dNdS/dnds_by_counts_results/{}.csv".format(regime)
+save_file = "results/tpm/dNdS/dnds_by_counts_results/{}.csv".format(regime)
 output_arr = []
 
 # Sublines in each regime

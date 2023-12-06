@@ -8,8 +8,8 @@ library(dndscv)
 regime <- "las"
 
 mut_file <- paste("dNdS/mut_tables/", regime, "_snv_only.csv", sep="")
-outfile_global <- paste("dNdS/dndscv_results/", regime, "_global.csv", sep="")
-outfile_selcv <- paste("dNdS/dndscv_results/", regime, "_selcv.csv", sep="")
+outfile_global <- paste("results/tpm/dNdS/dndscv_results/", regime, "_global.csv", sep="")
+outfile_selcv <- paste("results/tpm/dNdS/dndscv_results/", regime, "_selcv.csv", sep="")
 
 mut_table <- read.csv(mut_file, header = FALSE)
 dnds_out <- dndscv(mut_table, refdb = "RefCDS_mouse_GRCm38.p2.rda")

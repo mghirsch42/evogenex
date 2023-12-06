@@ -5,7 +5,7 @@
 ### get_gene_results.py and add_stats_cols.R
 ##########
 
-result_path="results/simulation/sim_clade_t10_r8/"
+result_path="results/simulated/adpt_sim_adpt_run/"
 
 for f in $result_path*/; do
     echo $f
