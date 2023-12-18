@@ -5,7 +5,7 @@ library(DESeq2)
 ##########
 
 # Read and format data
-count_mat <- read.table("data/RawCountFile_rsemgenes.txt", header=TRUE)
+count_mat <- read.table("data/mouse_treatment/raw_counts.txt", header=TRUE)
 
 response_data <- read.csv("data/mouse_treatment/responder_data.csv")
 rownames(count_mat) <- count_mat$gene_id
