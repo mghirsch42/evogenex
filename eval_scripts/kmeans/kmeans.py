@@ -1,10 +1,6 @@
 import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import colors as mcolors
-import seaborn as sns
 from sklearn import cluster
-from scipy.cluster.hierarchy import linkage, fclusterdata
 from sklearn.metrics import silhouette_score
 
 ##########
@@ -38,7 +34,8 @@ for regime in regimes:
     print(regime, len(temp))
     temp["regime"] = regime
     temp["v"] = np.where(temp["logFC"] < 0, np.log2(temp["qvalue"]), -1 * np.log2(temp["qvalue"])) # all q values will be < 1, so log will be negative, we want negative when log fold is negative
-    df = df.append(temp[["gene_name", "regime", "v"]])
+    df = pd.concat([df, pd.DataFrame(temp[["gene_name", "regime", "v"]])])
+    # df = df.append(temp[["gene_name", "regime", "v"]])
 # print(len(df))
 # exit()
 

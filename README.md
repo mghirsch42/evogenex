@@ -34,9 +34,14 @@ These scripts will save the results in specified file locations.
 
 Evaluation scripts are in the eval_scripts/ folder. These files organize the results and add more statistics columns. The get_gene_results.py script saves files with only positive results and all the results and organizes the columns. The add_stats_cols.R script will add columns for adjusted p-values, and log_2 fold change. The get_all_gene_results.sh will loop through all regimes and run get_gene_results.py and add_stats_cols.R for all results. The output of these files will provide files like the 24 subline results files in the Supplementary Files.
 
+These scripts assume that the results are saved in results/tpm/adpt_{regime}/ and are saved in results/tpm/gene_lists/adpt_{regime}/. Edit the paths as needed to fit your file structure.
+
 ### Cluster the results
 
 The scripts in kmeans/ provides code to cluster the results and make the heatmap in Figure 2. kmeans.py runs kmeans clustering on the results (with a defined random seed for reproducibility). heatmap.py plots the clusters as a heatmap.
+
+These scripts assume that the results are saved in results/tpm/adpt_{regime}/ and are saved in results/tpm/. Edit the paths as needed to fit your file structure.
+
 
 ## dN/dS evaluation
 
@@ -45,6 +50,9 @@ Scripts to run dN/dS methods are in the dNdS/ folder. To run dN/dS using the cou
 ## Evaluate adaptivity in differentially expressed genes
 
 Scripts to evaluate the genes with adaptive expression within the differentially expressed genes between post-treatment responders and non-responders are in the eval_scripts/treatment_eval/ folder. The deseq2_eval.py script will calculate the number of genes with adaptive expression that are also differentially expressed and save the information about the adaptivity and differential expression to a file. 
+
+This script assumes that the adaptivity results are saved in results/tpm/gene_lists/adpt_{regime}/ and evaluation results are saved in results/tpm/gene_lists/adpt_{regime}/enrichment/. Edit the paths as needed to fit your file structure.
+
 
 ## Simulation 
 
