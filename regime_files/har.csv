@@ -39,8 +39,8 @@ C1,C13,background
 C22,C4,background
 C13,C18,background
 C18,C15,chosen
-C18,C11,background
-C11,C16,background
-C16,C8,background
+C18,C11,chosen
+C11,C16,chosen
+C16,C8,chosen
 C8,C20,background
 C20,C7,background
