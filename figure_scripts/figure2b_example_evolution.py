@@ -15,21 +15,21 @@ import argparse
 ##########
 
 data_params = {
-        "model": "c",
+        "model": "a_a",
         "n1": 15,
         "n2": 5,
-        "t": 10,
+        "t": 50,
         "theta_base": 100,
-        "theta_ratio": 1.02,
-        "alpha": 0.3,
-        "sq": .25,
+        "theta_ratio": 1.1,
+        "alpha": 0.04,
+        "sq": .8,
         "nb": False,
         "r": 100
 }
 plot_params = {
         "figsize":(7,4),
         "style1":{"color":"black", "linewidth":.6, "linestyle":"solid"},
-        "style2":{"color":"black", "linewidth":.6, "linestyle":"solid"},
+        "style2":{"color":"red", "linewidth":.6, "linestyle":"solid"},
         "ylim": None,
         "title":"", 
         "save_path":None, 

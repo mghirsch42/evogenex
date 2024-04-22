@@ -2,7 +2,7 @@
 
 ## Regime files
 
-The regime files are located in the regime_files/ folder. These files define the HA-R, HA-S, and LA-S regimes for EvoGeneX.
+The regime files are located in the regime_files/ folder. These files define the HA-R, HA-S, and LA-S regimes for EvoGeneX. Each node in the tree is labelled by either "chosen" or "background."
 
 ## Tree files
 
@@ -19,10 +19,6 @@ The data used for our simulation files are available in the Supplementary Files.
 ### Prep 24-subline data
 
 First, you will need to download the 24-subline data from the Trisicell API and save it locally in a readable format. This is done in prep_data/get_multigene_data.py. By default, this script will use the tpm-normalized data, output files with up to 1000 genes for all 55,401 genes, include only genes at least one non-zero value for each species, and log-transform the values. You can change the maxiumum number of genes in each file using the --inc flag. If you do not want to save all the genes, you can specify the gene range you are interested in using the --start and --end flags. Genes are separated into multiple files for parallelization of running EvoGeneX. If you want a single file with all the genes, use --inc 55401.
-
-### Regime and tree files
-
-The tree file is in the tree_files/ folder and is in Newick format. The regime files are in the regime_files/ folder and are in the format required by EvoGeneX. Each node in the tree is labelled by either "chosen" or "background."
 
 ### Run EvoGeneX over the genes.
 
