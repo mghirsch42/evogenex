@@ -17,15 +17,15 @@ def get_num_clusters(df):
     kmax = 20
 
     for k in range(kmin, kmax):
-        preds = cluster.KMeans(n_clusters=k, random_state=0).fit(df[["har", "has", "las"]])
-        sil.append(silhouette_score(df[["har", "has", "las"]], preds.labels_, metric = "euclidean"))
+        preds = cluster.KMeans(n_clusters=k, random_state=0).fit(df[["har", "sas", "mas"]])
+        sil.append(silhouette_score(df[["har", "sas", "mas"]], preds.labels_, metric = "euclidean"))
 
     return np.argmax(sil) + 2 # add two because we start k at 2
 
 # Only adaptive genes in these files
 results_dir = "results/tpm/gene_lists/adpt_{}/gene_info.csv"
 save_file = "results/tpm/kmeans_clusters.csv"
-regimes = ["har", "has", "las"]
+regimes = ["har", "sas", "mas"]
 
 df = pd.DataFrame(columns=["gene_name", "regime", "v"])
 
@@ -35,17 +35,13 @@ for regime in regimes:
     temp["regime"] = regime
     temp["v"] = np.where(temp["logFC"] < 0, np.log2(temp["qvalue"]), -1 * np.log2(temp["qvalue"])) # all q values will be < 1, so log will be negative, we want negative when log fold is negative
     df = pd.concat([df, pd.DataFrame(temp[["gene_name", "regime", "v"]])])
-    # df = df.append(temp[["gene_name", "regime", "v"]])
-# print(len(df))
-# exit()
 
 df = df.pivot(index = "gene_name", columns="regime", values="v")
 df = df.fillna(0) # genes that aren't adaptive in that regime are assigned 0
-print(len(df))
 
 k = get_num_clusters(df)
 
-preds = cluster.KMeans(n_clusters=k, random_state=0).fit_predict(df[["har", "has", "las"]])
+preds = cluster.KMeans(n_clusters=k, random_state=0).fit_predict(df[["har", "sas", "mas"]])
 df["clusters"] = preds
 
 # We rename the clusters to sort then better for the heatmap -- cluster order was chosen manually

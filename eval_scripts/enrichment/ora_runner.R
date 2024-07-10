@@ -9,7 +9,7 @@ source("eval_scripts/enrichment/ora_functions.R")
 ### Options to run with KEGG or GO, although only KEGG was used in the results of this study.
 ##########
 
-regime <- "har"
+regime <- "har" # har, sas, or mas
 method <- "kegg" # go or kegg
 group <- "negative" # positive or negative
 save_file <- paste("results/tpm/gene_lists/adpt_",

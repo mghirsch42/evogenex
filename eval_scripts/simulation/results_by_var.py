@@ -7,7 +7,7 @@ def get_neut_sim_data(results_folder, regime, col):
     df = pd.DataFrame(columns=["sigma_sq", "r"])
     for f in os.listdir(results_folder):
         temp = pd.read_csv(results_folder+f)
-        if regime == "agg":
+        if regime == "adpt":
             temp = temp.iloc[::2, :] # Deal with double rows with the different theta values
             temp = temp.reset_index()
         temp["sigma_sq"] = f.split("_")[1]
@@ -20,7 +20,7 @@ def get_const_sim_data(results_folder, regime, col):
     df = pd.DataFrame(columns=["sigma_sq", "r", "alpha"])
     for f in os.listdir(results_folder):
         temp = pd.read_csv(results_folder+f)
-        if regime == "agg":
+        if regime == "adpt":
             temp = temp.iloc[::2, :] # Deal with double rows with the different theta values
             temp = temp.reset_index()
         temp["sigma_sq"] = f.split("_")[3]
@@ -34,7 +34,7 @@ def get_adpt_sim_data(results_folder, regime, col):
     df = pd.DataFrame(columns=["sigma_sq", "r", "alpha", "theta_ratio"])
     for f in os.listdir(results_folder):
         temp = pd.read_csv(results_folder+f)
-        if regime == "agg":
+        if regime == "adpt":
             temp = temp.iloc[::2, :] # Deal with double rows with the different theta values
             temp = temp.reset_index()
         temp["theta_ratio"] = f.split("_")[1]
@@ -48,15 +48,10 @@ def get_adpt_sim_data(results_folder, regime, col):
 def group(df, sim, regime, sim_vars, result_col, result_goal):
     df["{} sim, {} pred".format(sim, regime)] = (df[result_col] == result_goal).astype(int)
     count = df.groupby(sim_vars).count()
-
     gb = df.groupby(sim_vars).sum().reset_index()
-    print(count)
-    print(gb)
-    exit()
     return gb
 
 def main(sims, regimes, results_folder, save_folder, sim_var_dict):
-    # results_df = pd.DataFrame()
     for sim_data in sims:
         print(sim_data)
         for regime in regimes:
@@ -79,10 +74,7 @@ def main(sims, regimes, results_folder, save_folder, sim_var_dict):
             else:
                 print("sim_data not recognized, exiting") 
                 exit()
-            # results_df = results_df.append(gb)
             gb.to_csv(save_folder.format(sim_data, regime), index=False)
-    # results_df = results_df.drop(["gene", "pvalue", "qvalue"], axis=1)
-        # results_df.to_csv(save_file, index=False)
 
 if __name__ == "__main__":
     sims = ["neut", "const", "adpt"]
