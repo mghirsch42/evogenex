@@ -29,14 +29,6 @@ neut_sim_adpt_run.columns = neut_vars + ["# predicted adaptive"]
 adpt_sim_de.columns = adpt_vars + ["de"]
 neut_sim_de.columns = neut_vars + ["de"]
 
-print(neut_sim_adpt_run)
-print(len(adpt_sim_adpt_run))
-print(adpt_sim_adpt_run["# predicted adaptive"].sum())
-print(adpt_sim_de["de"].sum())
-print(len(neut_sim_adpt_run))
-print(neut_sim_adpt_run["# predicted adaptive"].sum())
-print(neut_sim_de["de"].sum())
-
 res = stats.ttest_ind(adpt_sim_adpt_run["# predicted adaptive"], adpt_sim_de["de"])
 print("adpt sim t-test:", res)
 res = stats.ttest_ind(neut_sim_adpt_run["# predicted adaptive"], neut_sim_de["de"])

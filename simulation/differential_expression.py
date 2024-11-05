@@ -9,10 +9,12 @@ import numpy as np
 ### Update file paths to reflect your data and save locations
 ##########
 
-base_path = "data/simulated/neut_sim/"
-regime ="har" # har, sas, or mas
+sim_dist = "poisson" # poisson or nb
+base_path = "data/{}_sim/neut_sim/".format(sim_dist)
+regime = "har" # har, sas, or mas
 regime_file = "regime_files/{}.csv".format(regime)
-save_path = "results/simulated/differential_expression/neut_sim/"
+# save_path = "results/{}_sim/differential_expression/neut_sim/".format(sim_dist)
+save_path = "temp_sim_res/"
 
 def run_de(df, r1_taxa, r2_taxa, save_file):
     df["chosen"] = df["species"].isin(r2_taxa)

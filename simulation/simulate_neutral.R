@@ -60,7 +60,8 @@ repnames = paste0('R', 1:nrep)
 dat = data.frame()
 for (i in 1:ngene) {
   t = OUwie.sim(tree, regimes, theta0 = theta_root, alpha=c(10e-10, 10e-10), sigma.sq = c(sigmasq, sigmasq), theta=c(theta_root,theta_root), root.age=max.age)
-  epsilon = matrix(rnbinom(nterm*nrep, size=r, mu=t$X), nterm, nrep) 
+  epsilon = matrix(rpois(nterm*nrep, lambda=t$X), nterm, nrep) 
+  # epsilon = matrix(rnbinom(nterm*nrep, size=r, mu=t$X), nterm, nrep) 
   for (s in 1:nterm) {
     for (j in 1:nrep) {
       if (runif(1, 0, 1) < rep_drop) {
